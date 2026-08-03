@@ -186,7 +186,9 @@ const routeMap: RouteMap = {
   "basic_productprice": "/basic/productprice",
   "home": "/home",
   "iframe-page": "/iframe-page/:url",
-  "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?"
+  "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?",
+  "purchase": "/purchase",
+  "purchase_inorders": "/purchase/inorders"
 };
 
 /**

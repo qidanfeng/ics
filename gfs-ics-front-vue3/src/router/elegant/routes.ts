@@ -103,5 +103,25 @@ export const generatedRoutes: GeneratedRoute[] = [
       constant: true,
       hideInMenu: true
     }
+  },
+  {
+    name: 'purchase',
+    path: '/purchase',
+    component: 'layout.base',
+    meta: {
+      title: 'purchase',
+      i18nKey: 'route.purchase'
+    },
+    children: [
+      {
+        name: 'purchase_inorders',
+        path: '/purchase/inorders',
+        component: 'view.purchase_inorders',
+        meta: {
+          title: 'purchase_inorders',
+          i18nKey: 'route.purchase_inorders'
+        }
+      }
+    ]
   }
 ];

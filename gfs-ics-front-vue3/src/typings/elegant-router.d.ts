@@ -41,6 +41,8 @@ declare module "@elegant-router/types" {
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
+    "purchase": "/purchase";
+    "purchase_inorders": "/purchase/inorders";
   };
 
   /**
@@ -94,6 +96,7 @@ declare module "@elegant-router/types" {
     | "home"
     | "iframe-page"
     | "login"
+    | "purchase"
   >;
 
   /**
@@ -121,6 +124,7 @@ declare module "@elegant-router/types" {
     | "basic_orderquantity"
     | "basic_productprice"
     | "home"
+    | "purchase_inorders"
   >;
 
   /**

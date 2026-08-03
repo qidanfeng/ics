@@ -332,7 +332,7 @@ import {
   cancelOrder,
   exportFile,
   finishOrders
-} from '@/service/api/ics/purchase-in-order';
+} from '@/service/api/purchase/purchase-in-order';
 import {
   getPurchaseDeliveryMethodList,
   getPurchaseInOrderStatusList,
