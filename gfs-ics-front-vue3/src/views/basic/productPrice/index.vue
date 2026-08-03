@@ -308,7 +308,7 @@ import {
   importFileForUpdate
 } from '@/service/api/basic/product-price-config';
 import { getImportTempletsUrl } from '@/utils/importTemplate';
-import UpdateOrAdd from './update-or-add.vue';
+import UpdateOrAdd from './modules/update-or-add.vue';
 import Upload from '@/components/upload/upload.vue';
 
 defineOptions({ name: 'ProductPriceConfig' });
