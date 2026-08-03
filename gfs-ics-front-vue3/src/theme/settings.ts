@@ -57,7 +57,7 @@ export const themeSettings: App.Theme.ThemeSetting = {
   },
   watermark: {
     visible: false,
-    text: 'GFS-MDM',
+    text: 'GFS-ICS',
     enableUserName: false
   },
   tokens: {

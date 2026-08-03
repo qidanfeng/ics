@@ -1,6 +1,6 @@
 const local: App.I18n.Schema = {
   system: {
-    title: '普冷MDM',
+    title: '普冷ICS',
     updateTitle: '系统版本更新通知',
     updateContent: '检测到系统有新版本发布，是否立即刷新页面？',
     updateConfirm: '立即刷新',
@@ -43,7 +43,7 @@ const local: App.I18n.Schema = {
     trigger: '触发',
     update: '更新',
     updateSuccess: '更新成功',
-    documentMdm: 'MDM文档',
+    documentIcs: 'ICS文档',
     yesOrNo: {
       yes: '是',
       no: '否'
@@ -164,36 +164,13 @@ const local: App.I18n.Schema = {
     home: '首页',
     'user-center': '个人中心',
     document: '帮助文档',
-    document_mdm: 'MDM文档',
+    document_ics: 'ICS文档',
     exception: '异常页',
     exception_403: '403',
     exception_404: '404',
     exception_500: '500',
 
-    edi: 'EDI管理',
-    "edi_mdm-synch-task": '主数据下发记录',
-
-    "config": '系统配置',
-    "config_product-audit-config": '产品审核配置',
-
-    basic: '信息管理',
-    "basic_client": '客户管理',
-    "basic_address": '地址管理',
-    "basic_project": '货主管理',
-
-    "basic_supplier": '供应商管理',
-    "basic_warehouse": '仓库管理',
-    "basic_dictionary": '字典管理',
-    "basic_operation-relation": '运作关系',
-
-    "basic_carrier": '承运商管理',
-    "basic_supplier": '供应商管理',
-    "basic_product": '产品管理',
-    "basic_product-audits": '产品审核',
-
-
-
-
+    basic: '信息管理'
   },
   page: {
     login: {

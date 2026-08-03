@@ -18,7 +18,7 @@ function loginOrRegister() {
   toLogin();
 }
 
-type DropdownKey = 'document_mdm' | 'logout';
+type DropdownKey = 'document_ics' | 'logout';
 
 type DropdownOption = {
   key: DropdownKey;
@@ -29,10 +29,10 @@ type DropdownOption = {
 const options = computed(() => {
   const opts: DropdownOption[] = [];
   // 根据权限显示知识库选项
-  if (hasAuth('mdm:helpDoc:helpDoc')) {
+  if (hasAuth('ics:helpDoc:helpDoc')) {
     opts.push({
-      label: $t('common.documentMdm'),
-      key: 'document_mdm',
+      label: $t('common.documentIcs'),
+      key: 'document_ics',
       icon: SvgIconVNode({ icon: 'ph:book', fontSize: 18 })
     });
   }
@@ -82,7 +82,7 @@ function handleDropdown(key: DropdownKey) {
           class="mx-4px my-1px rounded-6px"
           :icon="icon"
           :command="key"
-          v-track="{ name: key === 'document_mdm' ? 'MDM_DOCUMENT' : 'MDM_LOGOUT', description: key === 'document_mdm' ? 'MDM文档' : '退出登录' }"
+          v-track="{ name: key === 'document_ics' ? 'ICS_DOCUMENT' : 'ICS_LOGOUT', description: key === 'document_mdm' ? 'MDM文档' : '退出登录' }"
         >
           {{ label }}
         </ElDropdownItem>

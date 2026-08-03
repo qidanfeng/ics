@@ -107,7 +107,7 @@ class TrackService {
       referrer: this.currentPath || document.referrer,
       timestamp: Date.now(),
       userId: this.getUserId(),
-      platform: 'MDM'
+      platform: 'ICS'
     };
 
     this.currentPath = path;
@@ -124,7 +124,7 @@ class TrackService {
       path: this.currentPath || window.location.pathname,
       timestamp: Date.now(),
       userId: this.getUserId(),
-      platform: 'MDM'
+      platform: 'ICS'
     };
 
     this.buttonClicks.push(data);

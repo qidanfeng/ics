@@ -16,7 +16,7 @@ export const request = createFlatRequest(
     baseURL,
     timeout: 1000 * 180,
     headers: {
-      platform:"MDM",
+      platform:"ICS",
       'Content-Type': 'application/json; charset=utf-8'
     }
   },
@@ -177,7 +177,7 @@ export const blobRequest = createFlatRequest(
     withCredentials: true,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
-      platform: 'MDM'
+      platform: 'ICS'
     },
     responseType: 'blob'
   },

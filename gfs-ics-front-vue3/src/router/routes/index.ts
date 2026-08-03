@@ -23,15 +23,15 @@ const customRoutes: CustomRoute[] = [
     },
     children: [
       {
-        name: 'document_mdm',
-        path: '/document/mdm',
+        name: 'document_ics',
+        path: '/document/ics',
         component: 'view.iframe-page',
         props: {
-          url: 'https://web.gfscold.com/doc/mdm/#/'
+          url: 'https://web.gfscold.com/doc/ics/#/'
         },
         meta: {
-          title: 'document_mdm',
-          i18nKey: 'route.document_mdm',
+          title: 'document_ics',
+          i18nKey: 'route.document_ics',
           order: 6,
           constant: true,
           icon: 'ph:book'

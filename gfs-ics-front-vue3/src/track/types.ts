@@ -4,7 +4,7 @@ export enum TrackEventType {
 }
 
 export interface PageViewData {
-  platform: 'MDM';
+  platform: 'ICS';
   path: string;
   title?: string;
   referrer?: string;
@@ -14,7 +14,7 @@ export interface PageViewData {
 }
 
 export interface ButtonClickData {
-  platform: 'MDM';
+  platform: 'ICS';
   name: string;
   description?: string;
   path: string;
