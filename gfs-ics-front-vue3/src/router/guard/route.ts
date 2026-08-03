@@ -8,6 +8,7 @@ import type {
 import type { RouteKey, RoutePath } from '@elegant-router/types';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouteStore } from '@/store/modules/route';
+import { usePlatformStore } from '@/store/modules/platform';
 import { localStg } from '@/utils/storage';
 import { getRouteName } from '@/router/elegant/transform';
 
@@ -139,6 +140,13 @@ async function initRoute(to: RouteLocationNormalized): Promise<RouteLocationRaw 
 
       return location;
     }
+  }
+
+  // initialize platform data (client/projects/warehouses/suppliers/carriers) after login
+  // corresponds to vue2 Navbar's queryCurrentUserOwnClientHandle flow
+  const platformStore = usePlatformStore();
+  if (!platformStore.inited) {
+    await platformStore.init();
   }
 
   routeStore.onRouteSwitchWhenLoggedIn();

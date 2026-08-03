@@ -155,3 +155,15 @@ export function getAllOutCarrier(params?: any) {
     data: params
   });
 }
+
+/**
+ * 根据外部客户ID获取激活的承运商
+ * @param clientId 外部客户ID
+ */
+export function getActivatedCarrierByExternalClientId(clientId: string | number) {
+  return request<any>({
+    url: '/mdm/carrier/getActivatedCarrierByExternalClientId',
+    method: 'get',
+    params: { externalClientId: clientId }
+  });
+}

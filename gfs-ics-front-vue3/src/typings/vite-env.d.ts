@@ -110,6 +110,9 @@ declare namespace Env {
     readonly VITE_PROXY_LOG?: CommonType.YesOrNo;
     /** The launch editor */
     readonly VITE_DEVTOOLS_LAUNCH_EDITOR?: import('vite-plugin-vue-devtools').VitePluginVueDevToolsOptions['launchEditor'];
+
+    /** OSS 环境标识（用于模板下载路径） */
+    readonly VITE_APP_ENV: string;
   }
 }
 
