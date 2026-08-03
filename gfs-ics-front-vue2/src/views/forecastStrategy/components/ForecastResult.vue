@@ -37,9 +37,11 @@
           <div>
             <h6 class="subsection-title">历史拟合数据</h6>
             <el-table :data="fittedData" size="mini" max-height="250">
-              <el-table-column prop="period" label="时期" width="60" />
-              <el-table-column prop="actualValue" label="实际值" min-width="80" />
-              <el-table-column prop="fittedValue" label="拟合值" min-width="80" />
+              <el-table-column prop="period" label="时期" width="200" />
+              <el-table-column prop="actualValue" label="实际值" min-width="200" />
+              <el-table-column prop="fittedValue" label="拟合值" min-width="200" />
+              <!-- 暂时注释其他列 -->
+              <!--
               <el-table-column prop="residual" label="残差" min-width="80">
                 <template slot="header" slot-scope="scope">
                   <el-tooltip content="实际值与拟合值之间的差异，反映模型对数据的拟合程度" placement="top">
@@ -68,6 +70,7 @@
                   </el-tooltip>
                 </template>
               </el-table-column>
+              -->
             </el-table>
           </div>
         </el-col>
@@ -77,8 +80,10 @@
           <div>
             <h6 class="subsection-title">未来预测数据</h6>
             <el-table :data="forecastData" size="mini" max-height="250">
-              <el-table-column prop="period" label="预测时期" width="80" />
-              <el-table-column prop="forecastValue" label="预测值" min-width="80" />
+              <el-table-column prop="period" label="预测时期" width="300" />
+              <el-table-column prop="forecastValue" label="预测值" min-width="300" />
+              <!-- 暂时注释置信区间等列 -->
+              <!--
               <el-table-column prop="lowerBound" label="置信下限" min-width="90" />
               <el-table-column prop="upperBound" label="置信上限" min-width="90" />
               <el-table-column prop="intervalWidth" label="区间宽度" min-width="90" />
@@ -103,6 +108,7 @@
                   </el-tooltip>
                 </template>
               </el-table-column>
+              -->
             </el-table>
           </div>
         </el-col>
@@ -161,55 +167,55 @@
 
 
     <!-- 模型评估指标 -->
-    <div class="report-section">
-      <h5 class="report-title">模型评估指标</h5>
-      <el-row :gutter="10">
-        <el-col :span="8">
-          <div class="report-item">
-            <div class="report-label">均方误差 (MSE)</div>
-            <div class="report-value">{{ statisticsData.mse }}</div>
-            <div class="report-desc">拟合值与实际值偏差平方的平均值</div>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="report-item">
-            <div class="report-label">均方根误差 (RMSE)</div>
-            <div class="report-value">{{ statisticsData.rmse }}</div>
-            <div class="report-desc">MSE的平方根，与原始数据同量纲</div>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="report-item">
-            <div class="report-label">平均绝对百分比误差 (MAPE)</div>
-            <div class="report-value">{{ statisticsData.mape }}%</div>
-            <div class="report-desc">预测准确度指标，值越小越准确</div>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="10" style="margin-top: 10px;">
-        <el-col :span="8">
-          <div class="report-item">
-            <div class="report-label">标准误差</div>
-            <div class="report-value">{{ statisticsData.stdError }}</div>
-            <div class="report-desc">预测值的标准不确定性</div>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="report-item">
-            <div class="report-label">历史数据点数</div>
-            <div class="report-value">{{ statisticsData.dataPoints }}</div>
-            <div class="report-desc">参与模型训练的数据点数量</div>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="report-item">
-            <div class="report-label">置信水平</div>
-            <div class="report-value">{{ statisticsData.confidenceLevel }}</div>
-            <div class="report-desc">预测区间的统计置信度</div>
-          </div>
-        </el-col>
-      </el-row>
-    </div>
+<!--    <div class="report-section">-->
+<!--      <h5 class="report-title">模型评估指标</h5>-->
+<!--      <el-row :gutter="10">-->
+<!--        <el-col :span="8">-->
+<!--          <div class="report-item">-->
+<!--            <div class="report-label">均方误差 (MSE)</div>-->
+<!--            <div class="report-value">{{ statisticsData.mse }}</div>-->
+<!--            <div class="report-desc">拟合值与实际值偏差平方的平均值</div>-->
+<!--          </div>-->
+<!--        </el-col>-->
+<!--        <el-col :span="8">-->
+<!--          <div class="report-item">-->
+<!--            <div class="report-label">均方根误差 (RMSE)</div>-->
+<!--            <div class="report-value">{{ statisticsData.rmse }}</div>-->
+<!--            <div class="report-desc">MSE的平方根，与原始数据同量纲</div>-->
+<!--          </div>-->
+<!--        </el-col>-->
+<!--        <el-col :span="8">-->
+<!--          <div class="report-item">-->
+<!--            <div class="report-label">平均绝对百分比误差 (MAPE)</div>-->
+<!--            <div class="report-value">{{ statisticsData.mape }}%</div>-->
+<!--            <div class="report-desc">预测准确度指标，值越小越准确</div>-->
+<!--          </div>-->
+<!--        </el-col>-->
+<!--      </el-row>-->
+<!--      <el-row :gutter="10" style="margin-top: 10px;">-->
+<!--        <el-col :span="8">-->
+<!--          <div class="report-item">-->
+<!--            <div class="report-label">标准误差</div>-->
+<!--            <div class="report-value">{{ statisticsData.stdError }}</div>-->
+<!--            <div class="report-desc">预测值的标准不确定性</div>-->
+<!--          </div>-->
+<!--        </el-col>-->
+<!--        <el-col :span="8">-->
+<!--          <div class="report-item">-->
+<!--            <div class="report-label">历史数据点数</div>-->
+<!--            <div class="report-value">{{ statisticsData.dataPoints }}</div>-->
+<!--            <div class="report-desc">参与模型训练的数据点数量</div>-->
+<!--          </div>-->
+<!--        </el-col>-->
+<!--        <el-col :span="8">-->
+<!--          <div class="report-item">-->
+<!--            <div class="report-label">置信水平</div>-->
+<!--            <div class="report-value">{{ statisticsData.confidenceLevel }}</div>-->
+<!--            <div class="report-desc">预测区间的统计置信度</div>-->
+<!--          </div>-->
+<!--        </el-col>-->
+<!--      </el-row>-->
+<!--    </div>-->
 
   </div>
 </template>
@@ -221,6 +227,7 @@ export default {
   data() {
     return {
       historicalData:[],
+      realInventoryData: null, // 后端返回的真实库存决策数据
       forecastResult: {
         algorithm: {
           alpha: '--',
@@ -247,6 +254,7 @@ export default {
         },
         fittedData: [], // 历史拟合详细数据：每个时期的实际值、拟合值、残差等
         forecastData: [],// 未来预测详细数据：每个时期的预测值、置信区间等
+        historyDate:[],
         lowerBound: [],
         upperBound: [],
         level: [],
@@ -261,18 +269,44 @@ export default {
   methods: {
     updateResult(formData, historicalData,result){
       this.updateForecastResult(formData,historicalData,result);
-      const { leadTime, safetyFactor } = this.forecastResult.algorithm;
-      let param = {
-        historicalData:historicalData,
-        serviceLevel:formData.serviceLevel/100,
-        leadTime:leadTime,
-        demandProbability:formData.demandProbability,
-        simulations:10000
+
+      // 如果后端没有返回库存决策数据，则使用前端计算
+      // if (!this.realInventoryData) {
+      //   const { leadTime, safetyFactor } = this.forecastResult.algorithm;
+      //   let param = {
+      //     historicalData:historicalData,
+      //     serviceLevel:formData.serviceLevel/100,
+      //     leadTime:leadTime,
+      //     demandProbability:formData.demandProbability,
+      //     simulations:10000
+      //   }
+      //   let inventoryDecision = calculateInventoryDecision(param);
+      //   this.forecastResult.inventoryData.safetyStock = inventoryDecision.recommendedStock;
+      //   console.log("前端安全库存计算结果：",inventoryDecision);
+      //   this.calculateInventory()
+      // }
+    },
+
+    /**
+     * 更新库存决策数据（使用后端返回的真实数据）
+     * @param {Object} inventoryDecisionData 后端返回的库存决策数据
+     */
+    updateInventoryDecisionData(inventoryDecisionData) {
+      console.log('更新库存决策数据:', inventoryDecisionData);
+
+      // 存储真实数据
+      this.realInventoryData = inventoryDecisionData;
+
+      // 使用后端返回的真实数据更新库存计算结果
+      if (inventoryDecisionData.success) {
+        this.forecastResult.inventoryData.safetyStock = inventoryDecisionData.recommendedSafeStock;
+        this.forecastResult.inventoryData.leadTimeDemand = inventoryDecisionData.leadTimeDemand;
+        this.forecastResult.inventoryData.reorderPoint = inventoryDecisionData.reorderPoint;
+
+        // 同时更新算法参数中的真实值
+        this.forecastResult.algorithm.leadTime = inventoryDecisionData.leadTime;
+        this.forecastResult.algorithm.safetyFactor = inventoryDecisionData.safetyFactor;
       }
-      let inventoryDecision = calculateInventoryDecision(param);
-      this.forecastResult.inventoryData.safetyStock = inventoryDecision.recommendedStock;
-      console.log("安全库存计算结果：",inventoryDecision);
-      this.calculateInventory()
     },
     calculateInventory() {
     // 获取预测结果数据
@@ -347,8 +381,6 @@ export default {
   },
     updateForecastResult(formData, historicalData, result) {
       this.historicalData = historicalData;
-      // 更新算法参数
-      console.log(formData)
       this.forecastResult.algorithm.alpha = formData.alpha.toFixed(3);
       this.forecastResult.algorithm.beta = formData.beta.toFixed(3);
       this.forecastResult.algorithm.gamma = formData.gamma.toFixed(3);
@@ -358,15 +390,49 @@ export default {
       this.forecastResult.algorithm.leadTime = formData.leadTime;
       this.forecastResult.algorithm.safetyFactor = formData.safetyFactor;
       console.log(result);
+
+      // 生成详细的历史拟合数据
+      this.forecastResult.fittedData = [];
+      for (let i = 0; i < historicalData.length; i++) {
+        let fittedData = null;
+        if(result.fittedDetails.length>0) {
+          for(let j=0;j<result.fittedDetails.length;j++){
+            if(result.fittedDetails[j].forecastDate===result.historyDate[i]){
+              fittedData = result.fittedDetails[j].forecastQuantity;
+            }
+          }
+        }
+        if (historicalData[i] >= 0) {
+          this.forecastResult.fittedData.push({
+            period: result.historyDate[i],
+            actualValue: historicalData[i].toFixed(2),
+            fittedValue: fittedData != null ? fittedData : '--',
+          });
+        }
+      }
+
+      // 生成详细的未来预测数据
+      this.forecastResult.forecastData = [];
+      for (let i = 0; i < result.forecastDetails.length; i++) {
+        this.forecastResult.forecastData.push({
+          period: result.forecastDetails[i].forecastDate,
+          forecastValue: result.forecastDetails[i].forecastQuantity.toFixed(2),
+        });
+      }
+
       // 更新数据统计
       const mse = result.statistics.mse;
-      const rmse = Math.sqrt(mse);
+
+      // 检查mse是否为有效数字
+      const mseValue = typeof mse === 'number' && !isNaN(mse) ? mse : 0;
+      const rmse = Math.sqrt(mseValue);
 
       // 计算MAPE (平均绝对百分比误差)
       let mape = 0;
       let validMapeCount = 0;
       for (let i = 0; i < historicalData.length; i++) {
-        if (historicalData[i] > 0 && result.fittedData[i] > 0) {
+        if (historicalData[i] >= 0 && result.fittedData && result.fittedData[i] >= 0 && historicalData[i] > 0) {
+          // 只有当实际值大于0时才计算MAPE（避免除以0）
           const error = Math.abs(historicalData[i] - result.fittedData[i]);
           const percentageError = error / historicalData[i];
           mape += percentageError;
@@ -375,47 +441,12 @@ export default {
       }
       mape = validMapeCount > 0 ? (mape / validMapeCount * 100) : 0;
 
-      this.forecastResult.statistics.mse = mse.toExponential(3);
-      this.forecastResult.statistics.rmse = rmse.toFixed(2);
-      this.forecastResult.statistics.mape = mape.toFixed(2);
-      this.forecastResult.statistics.stdError = result.statistics.stdError.toFixed(2);
+      // 安全地设置统计值
+      this.forecastResult.statistics.mse = typeof mseValue === 'number' ? mseValue.toExponential(3) : '--';
+      this.forecastResult.statistics.rmse = typeof rmse === 'number' ? rmse.toFixed(2) : '--';
+      this.forecastResult.statistics.mape = typeof mape === 'number' ? mape.toFixed(2) : '--';
+      this.forecastResult.statistics.stdError = result.statistics.stdError && typeof result.statistics.stdError === 'number' ? result.statistics.stdError.toFixed(2) : '--';
       this.forecastResult.statistics.dataPoints = historicalData.length;
-
-      // 生成详细的历史拟合数据
-      this.forecastResult.fittedData = [];
-      for (let i = 0; i < historicalData.length; i++) {
-        if (result.fittedData[i] > 0) {
-          const seasonalIndex = i % result.seasonal.length;
-          this.forecastResult.fittedData.push({
-            period: i + 1,
-            actualValue: historicalData[i].toFixed(2),
-            fittedValue: result.fittedData[i].toFixed(2),
-            residual: (historicalData[i] - result.fittedData[i]).toFixed(2),
-            level: result.level ? result.level[i].toFixed(2) : '--',
-            trend: result.trend ? result.trend[i].toFixed(2) : '--',
-            seasonal: result.seasonal ? result.seasonal[seasonalIndex].toFixed(2) : '--'
-          });
-        }
-      }
-
-      // 生成详细的未来预测数据
-      this.forecastResult.forecastData = [];
-      for (let i = 0; i < result.forecastData.length; i++) {
-        const lower = result.lowerBound[i];
-        const upper = result.upperBound[i];
-        const intervalWidth = upper - lower;
-
-        this.forecastResult.forecastData.push({
-          period: `T+${i + 1}`,
-          forecastValue: result.forecastData[i].toFixed(2),
-          lowerBound: lower.toFixed(2),
-          upperBound: upper.toFixed(2),
-          intervalWidth: intervalWidth.toFixed(2),
-          level: result.forecastLevel ? result.forecastLevel[i].toFixed(2) : '--',
-          trend: result.forecastTrend ? result.forecastTrend[i].toFixed(2) : '--',
-          seasonal: result.forecastSeasonal ? result.forecastSeasonal[i].toFixed(2) : '--'
-        });
-      }
     }
   },
   computed: {

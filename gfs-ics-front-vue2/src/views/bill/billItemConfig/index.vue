@@ -47,7 +47,7 @@
             @selection-change="handleSelectionChange"
           >
           <u-table-column type="selection" width="55" align="center" fixed="left"/>
-            <u-table-column type="index" width="55" align="center" />
+            <u-table-column type="index" label="序号" width="55" align="center" />
           <u-table-column prop="costItemCode" label="费项编码" width="120" align="center" show-overflow-tooltip />
           <u-table-column prop="costItemName" label="费项名称" min-width="150" align="center" show-overflow-tooltip />
           <u-table-column prop="createdBy" label="创建人" width="100" align="center" show-overflow-tooltip/>

@@ -327,5 +327,18 @@ export const BASIC_OPTIONS = {
     { projectId: 'PJ001', projectName: '货主A' },
     { projectId: 'PJ002', projectName: '货主B' },
     { projectId: 'PJ003', projectName: '货主C' }
+  ],
+  // 货品分类字典
+  productCategories: [
+    { value: 'CAT001', label: '电子产品' },
+    { value: 'CAT002', label: '服装鞋帽' },
+    { value: 'CAT003', label: '食品饮料' },
+    { value: 'CAT004', label: '家居用品' },
+    { value: 'CAT005', label: '图书文教' },
+    { value: 'CAT006', label: '美妆个护' },
+    { value: 'CAT007', label: '运动户外' },
+    { value: 'CAT008', label: '母婴玩具' },
+    { value: 'CAT009', label: '汽车用品' },
+    { value: 'CAT010', label: '办公设备' }
   ]
 };

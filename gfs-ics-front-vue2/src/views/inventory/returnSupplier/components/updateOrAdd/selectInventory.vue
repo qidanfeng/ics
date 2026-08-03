@@ -200,7 +200,7 @@
         </el-button>
         <el-button size="mini" @click="handleClearAll">清空</el-button>
         <span style="margin-left: 10px; color: #409EFF;">
-          已选择 {{ selectedRows.length }} 项，退货数量：{{ totalReturnQty }}
+          已选择 {{ selectedRows.length }} 项，退货数量：{{ totalReturnQtyWithReceiveUnit }} 收货单位 | {{ totalReturnQtyWithInventoryUnit }} 库存单位
         </span>
       </div>
 
@@ -225,35 +225,65 @@
         >
           <!-- 复选框列 -->
          <el-table-column type="selection" width="55" align="center" fixed="left"></el-table-column>
-          <el-table-column type="index" width="55" align="center"></el-table-column>
+          <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
          <el-table-column prop="productNumber" label="产品编码" min-width="150" show-overflow-tooltip></el-table-column>
          <el-table-column prop="productName" label="产品名称" min-width="150" show-overflow-tooltip></el-table-column>
-         <el-table-column prop="availableQty" label="可用库存" min-width="100" ></el-table-column>
+
+         <el-table-column label="可用库存(库存单位)" min-width="130" >
+           <template slot-scope="scope">
+             {{ scope.row.availableQty+scope.row.unitDictionaryName}}
+           </template>
+         </el-table-column>
+         <el-table-column label="可用库存(收货单位)" min-width="130" >
+           <template slot-scope="scope">
+             {{ calculateQuantityToUnitForShow(scope.row.availableQty, scope.row.receiveProductPackVo, scope.row.unitDictionaryName) }}
+           </template>
+         </el-table-column>
 
          <el-table-column label="已退货数量" width="100">
-            <template slot-scope="scope">
-              {{ getReturnedQty(scope.row) }}
-            </template>
+           <template slot-scope="scope">
+             <!--              {{ getReturnedQty(scope.row) }}-->
+             {{
+               calculateQuantityToUnitForShow(getReturnedQty(scope.row), scope.row.receiveProductPackVo, scope.row.unitDictionaryName)
+             }}
+           </template>
          </el-table-column>
-         <el-table-column label="退货数量" width="200">
-            <template slot-scope="scope">
-              <el-input-number
-                v-model="scope.row.returnQty"
-                :min="0"
-                style="width: 100%"
-                :max="getRemainingQty(scope.row)"
-                size="small"
-                :disabled="getRemainingQty(scope.row) <= 0"
-                @change="handleReturnQtyChange(scope.row)"
-              ></el-input-number>
-            </template>
+         <el-table-column label="退货数量(库存单位)" width="200">
+           <template slot-scope="scope">
+             <el-input-number
+               v-model="scope.row.returnQtyWithInventoryUnit"
+               :min="0"
+               style="width: 100%"
+               :max="getReturnQtyWithInventoryUnitMaxLimit(scope.row)"
+               size="small"
+               :disabled="getRemainingQty(scope.row) <= 0"
+               @change="handleReturnQtyChange(scope.row)"
+             ></el-input-number>
+           </template>
+         </el-table-column>
+         <el-table-column label="退货数量(收货单位)" width="200">
+           <template slot-scope="scope">
+             <el-input-number
+               v-model="scope.row.returnQtyWithReceiveUnit"
+               :min="0"
+               style="width: 100%"
+               :max="getReturnQtyWithReceiveUnitMaxLimit(scope.row)"
+               size="small"
+               :disabled="getRemainingQty(scope.row) < scope.row.receiveProductPackVo.number || scope.row.receiveProductPackLossFlag || scope.row.receiveProductPackVo.number === 1"
+               @change="handleReturnQtyChange(scope.row)"
+             ></el-input-number>
+           </template>
          </el-table-column>
          <el-table-column label="剩余数量" width="100">
-            <template slot-scope="scope">
-              {{ getRemainingQty(scope.row) - scope.row.returnQty }}
-            </template>
+           <template slot-scope="scope">
+             <!--              {{ getRemainingQty(scope.row) - scope.row.returnQty }}-->
+             {{
+               calculateQuantityToUnitForShow(getRemainingQty(scope.row) - scope.row.returnQty, scope.row.receiveProductPackVo, scope.row.unitDictionaryName)
+             }}
+           </template>
          </el-table-column>
-         <el-table-column prop="unitDictionaryName" label="单位" width="80"></el-table-column>
+
+<!--         <el-table-column prop="unitDictionaryName" label="单位" width="80"></el-table-column>-->
           <!-- 批次属性列 -->
          <el-table-column prop="lotAttr01Value" label="生产日期" min-width="120" show-overflow-tooltip></el-table-column>
          <el-table-column prop="lotAttr02Value" label="过期日期" min-width="120" show-overflow-tooltip></el-table-column>
@@ -307,7 +337,7 @@ export default {
       type: Boolean,
       default: false
     },
-    // 当前已选择的调拨明细
+    // 当前已选择的退货明细
     detailList: {
       type: Array,
       default: () => []
@@ -368,6 +398,8 @@ export default {
       // 选中的行数据
       selectedRows: [],
       totalReturnQty:0,
+      totalReturnQtyWithReceiveUnit:0,
+      totalReturnQtyWithInventoryUnit:0,
       // 分页参数
       pagination: {
         currentPage: 1,
@@ -386,11 +418,25 @@ export default {
       return this.inventoryList
         .map(item => {
           // 从returnQtyMap中获取用户输入的退货数量，如果没有则为0
-          const returnQty = this.returnQtyMap[item.uniqueCode] || 0
+          const returnQty = this.returnQtyMap[item.uniqueCode] || 0;
+          // 无收货单位时特殊处理
+          if(!item.receiveProductPackVo){
+            item.receiveProductPackLossFlag = true;
+            item.receiveProductPackVo = {
+              unitDictionaryId:item.unitDictionaryId,
+              unitDictionaryName:item.unitDictionaryName,
+              number:1,
+            }
+          }
+          let returnQtyTranUnitObj = this.calculateQuantityToUnit(returnQty,item.receiveProductPackVo);
+          let returnQtyWithReceiveUnit = returnQtyTranUnitObj.quantityWithReceiveUnit;
+          let returnQtyWithInventoryUnit = returnQtyTranUnitObj.quantityWithInventoryUnit;
 
           return {
             ...item,
             returnQty: returnQty,
+            returnQtyWithReceiveUnit: returnQtyWithReceiveUnit,
+            returnQtyWithInventoryUnit: returnQtyWithInventoryUnit,
             remainingQty: this.getRemainingQty(item),
             returnedQty: this.getReturnedQty(item)
           }
@@ -466,7 +512,7 @@ export default {
     handleConfirm() {
       const selectedItems = []
 
-      // 处理复选框选中的行（使用用户手动调整后的调拨数量）
+      // 处理复选框选中的行（使用用户手动调整后的退货数量）
       this.selectedRows.forEach(row => {
         const returnQty = this.returnQtyMap[row.uniqueCode] || 0
         if (returnQty > 0) {
@@ -484,7 +530,7 @@ export default {
         }
       })
 
-      // 处理手动输入调拨数量的行
+      // 处理手动输入退货数量的行
       this.availableInventoryList
         .filter(item => item.returnQty > 0 && !this.selectedRows.some(row => row.uniqueCode === item.uniqueCode))
         .forEach(item => {
@@ -505,29 +551,53 @@ export default {
         const existingIndex = updatedDetails.findIndex(detail =>
           detail.uniqueCode === newItem.uniqueCode
         )
-
+        let quantityForDetailNew = newItem.quantity;
+        let matchUpdatedDetail = newItem;
         if (existingIndex >= 0) {
-          // 如果已存在，则累加退货数量
-          updatedDetails[existingIndex].returnQty += newItem.returnQty
+          matchUpdatedDetail = updatedDetails[existingIndex];
           //因为两边取值名称不同，所以需要多加一个变量
-          updatedDetails[existingIndex].quantity += newItem.quantity
+          quantityForDetailNew = matchUpdatedDetail.quantity * matchUpdatedDetail.unitMatchInventoryNumber + newItem.quantity
         } else {
           // 如果不存在，则添加新项
           updatedDetails.push(newItem)
 
         }
+
+        let availableQtyTranUnitObj = this.calculateQuantityToUnit(newItem.availableQty,newItem.receiveProductPackVo);
+        let returnQtyTranUnitObj = this.calculateQuantityToUnit(quantityForDetailNew,newItem.receiveProductPackVo);
+        let returnOrderDetailQuantity = quantityForDetailNew;
+        let returnOrderDetailUnitId = newItem.unitDictionaryId;
+        let returnOrderDetailUnitName = newItem.unitDictionaryName;
+        let unitMatchInventoryNumber = 1;
+        let returnOrderDetailQuantityMaxLimit = newItem.availableQty;
+        if(returnQtyTranUnitObj.quantityWithInventoryUnit === 0){
+          returnOrderDetailQuantity = returnQtyTranUnitObj.quantityWithReceiveUnit;
+          returnOrderDetailUnitId = newItem.receiveProductPackVo.unitDictionaryId;
+          returnOrderDetailUnitName = newItem.receiveProductPackVo.unitDictionaryName;
+          returnOrderDetailQuantityMaxLimit = availableQtyTranUnitObj.quantityWithReceiveUnit;
+          unitMatchInventoryNumber = newItem.receiveProductPackVo.number;
+        }
+        matchUpdatedDetail.quantity = returnOrderDetailQuantity;
+        matchUpdatedDetail.unitDictionaryId = returnOrderDetailUnitId;
+        matchUpdatedDetail.unitDictionaryName = returnOrderDetailUnitName;
+        matchUpdatedDetail.quantityMaxLimit = returnOrderDetailQuantityMaxLimit;
+        matchUpdatedDetail.unitMatchInventoryNumber = unitMatchInventoryNumber;
       })
 
       this.$emit('confirm', updatedDetails)
       this.dialogVisible = false
       this.$emit('update:visible', false)
     },
-//获取退货得总量
+    //获取退货得总量
     getReturnedTotalQty(){
       this.totalReturnQty=0;
+      this.totalReturnQtyWithReceiveUnit=0;
+      this.totalReturnQtyWithInventoryUnit=0;
       this.availableInventoryList.forEach(item => {
         if (item.returnQty > 0) {
           this.totalReturnQty += item.returnQty
+          this.totalReturnQtyWithReceiveUnit += item.returnQtyWithReceiveUnit
+          this.totalReturnQtyWithInventoryUnit += item.returnQtyWithInventoryUnit
         }
 
       })
@@ -535,23 +605,136 @@ export default {
     // 获取已退货的数量
     getReturnedQty(item) {
       const existingDetail = this.detailList.find(detail => detail.uniqueCode === item.uniqueCode)
-      return existingDetail ? existingDetail.quantity : 0
+      if(existingDetail){
+        let unitMatchInventoryNumber = this.getUnitMatchInventoryNumber(item,existingDetail);
+        return existingDetail.quantity * unitMatchInventoryNumber;
+      }
+
+      return 0
+    },
+
+    getUnitMatchInventoryNumber(item,existingDetail) {
+      if (item.unitDictionaryId === existingDetail.unitDictionaryId) {
+        return 1;
+      } else if (item.receiveProductPackVo.unitDictionaryId === existingDetail.unitDictionaryId) {
+        return item.receiveProductPackVo.number;
+      } else {
+        this.$message.error("未匹配到包装单位");
+        throw new Error("未匹配到包装单位");
+      }
     },
 
     // 获取剩余数量（考虑已退货的数量）
     getRemainingQty(item) {
       const existingDetail = this.detailList.find(detail => detail.uniqueCode === item.uniqueCode)
       if (existingDetail) {
-        return Math.max(0, item.availableQty - existingDetail.quantity)
+        let unitMatchInventoryNumber = this.getUnitMatchInventoryNumber(item,existingDetail);
+        return Math.max(0, item.availableQty - existingDetail.quantity * unitMatchInventoryNumber)
       }
       return item.availableQty
     },
 
     // 退货数量变化处理
     handleReturnQtyChange(item) {
-     this.returnQtyMap[item.uniqueCode]=item.returnQty;
-      this.getReturnedTotalQty()
+      // 更新returnQtyMap中的值，使用Vue.set确保响应式
+      let returnQtyWithReceiveUnit = item.returnQtyWithReceiveUnit;
+      let returnQty = item.returnQtyWithInventoryUnit;
+      if(returnQtyWithReceiveUnit){
+        let returnQtyByReceiveTrans = returnQtyWithReceiveUnit * item.receiveProductPackVo.number;
+        returnQty += returnQtyByReceiveTrans;
+      }
+      item.returnQty = returnQty;
+
+      this.returnQtyMap[item.uniqueCode]= item.returnQty;
+      this.getReturnedTotalQty();
+
     },
+    getReturnQtyWithReceiveUnitMaxLimit(row){
+      if(row.receiveProductPackLossFlag || row.receiveProductPackVo.number === 1){
+        return 0;
+      }
+      return Math.floor((this.getRemainingQty(row)-row.returnQtyWithInventoryUnit) / row.receiveProductPackVo.number);
+    },
+    getReturnQtyWithInventoryUnitMaxLimit(row){
+      if(row.receiveProductPackLossFlag || row.receiveProductPackVo.number === 1){
+        return this.getRemainingQty(row);
+      }
+      return Math.min((this.getRemainingQty(row)-row.returnQtyWithReceiveUnit * row.receiveProductPackVo.number),row.receiveProductPackVo.number-1);
+    },
+    /**
+     * 计算数量到单位的转换
+     * @param {number} quantity - 数量
+     * @param {Object} packUnitNumberVo - 包装单位信息
+     * @param {string} inventoryUnitName - 库存单位名称
+     * @returns {string} 转换后的字符串表示
+     */
+    calculateQuantityToUnit(quantity, packUnitNumberVo) {
+      if (!packUnitNumberVo || packUnitNumberVo.number === 1) {
+        // 和库存单位一致，不处理
+        return {quantityWithReceiveUnit: 0, quantityWithInventoryUnit: quantity};
+      }
+
+      const packNumber = Number(packUnitNumberVo.number) || 1;
+
+      // 转成单位数量
+      const spec = Math.floor(quantity / packNumber);
+      const remainder = quantity - (spec * packNumber);
+
+      if (Math.abs(remainder) < 0.000001) { // 处理浮点数精度问题
+        return {quantityWithReceiveUnit: spec, quantityWithInventoryUnit: 0};
+      }
+
+      return {quantityWithReceiveUnit: spec, quantityWithInventoryUnit: remainder};
+    },
+    /**
+     * 计算数量到单位的转换-展示用
+     * @param {number} quantity - 数量
+     * @param {Object} packUnitNumberVo - 包装单位信息
+     * @param {string} inventoryUnitName - 库存单位名称
+     * @returns {string} 转换后的字符串表示
+     */
+    calculateQuantityToUnitForShow(quantity, packUnitNumberVo, inventoryUnitName) {
+      if (!packUnitNumberVo || packUnitNumberVo.number === 1) {
+        // 和库存单位一致，不处理
+        return this.formatNumber(quantity) + inventoryUnitName;
+      }
+
+      const packNumber = Number(packUnitNumberVo.number) || 1;
+
+      // 转成单位数量
+      const spec = Math.floor(quantity / packNumber);
+      const remainder = quantity - (spec * packNumber);
+
+      if (Math.abs(remainder) < 0.000001) { // 处理浮点数精度问题
+        return this.formatNumber(spec) + packUnitNumberVo.unitDictionaryName;
+      }
+
+      return this.formatNumber(spec) + packUnitNumberVo.unitDictionaryName + this.formatNumber(remainder) + inventoryUnitName;
+    },
+    /**
+     * 格式化数字，如果是整数则去除小数部分，否则保留最多4位小数
+     * @param {number} value - 要格式化的数值
+     * @returns {string} 格式化后的字符串
+     */
+    formatNumber(value) {
+      // 处理JavaScript浮点数精度问题
+      const num = Number(value);
+
+      // 检查是否为整数
+      if (Number.isInteger(num)) {
+        return num.toString();
+      }
+
+      // 使用toFixed处理小数，然后移除末尾的0
+      let str = num.toFixed(4);
+
+      // 移除末尾的0和小数点
+      str = str.replace(/(\.\d*?)0+$/, '$1');
+      str = str.replace(/\.$/, '');
+
+      return str;
+    },
+
 
     // 复选框选择变化
     handleSelectionChange(selection, row) {
@@ -561,34 +744,45 @@ export default {
           if (item.uniqueCode == row.uniqueCode) {
             const remainingQty = this.getRemainingQty(row);
             this.returnQtyMap[row.uniqueCode] = remainingQty;
+            let remainingQtyTransUnitObj = this.calculateQuantityToUnit(remainingQty,row.receiveProductPackVo);
+
             row.returnQty = remainingQty;
+            row.returnQtyWithReceiveUnit = remainingQtyTransUnitObj.quantityWithReceiveUnit;
+            row.returnQtyWithInventoryUnit = remainingQtyTransUnitObj.quantityWithInventoryUnit;
             this.selectedRows = selection;
-            this.getReturnedTotalQty()
+            this.getReturnedTotalQty();
             return;
           }
         }
       }
       delete this.returnQtyMap[row.uniqueCode];
       row.returnQty = 0;
+      row.returnQtyWithReceiveUnit = 0;
+      row.returnQtyWithInventoryUnit = 0;
       this.selectedRows = selection;
-      this.getReturnedTotalQty()
+      this.getReturnedTotalQty();
     },
     handleSelectionAllChange(selection){
       if(selection.length == 0){
         this.returnQtyMap={};
         this.selectedRows.forEach(row=>{
           row.returnQty = 0;
+          row.returnQtyWithReceiveUnit = 0;
+          row.returnQtyWithInventoryUnit = 0;
         })
       }
       selection.forEach(row=>{
         const remainingQty = this.getRemainingQty(row)
         this.returnQtyMap[row.uniqueCode] = remainingQty;
+        let remainingQtyTransUnitObj = this.calculateQuantityToUnit(remainingQty,row.receiveProductPackVo);
+
         row.returnQty = remainingQty;
+        row.returnQtyWithReceiveUnit = remainingQtyTransUnitObj.quantityWithReceiveUnit;
+        row.returnQtyWithInventoryUnit = remainingQtyTransUnitObj.quantityWithInventoryUnit;
       })
       this.selectedRows = selection;
-      this.getReturnedTotalQty()
+      this.getReturnedTotalQty();
     },
-
 
     // 清空选择
     handleClearAll() {
@@ -597,8 +791,11 @@ export default {
       this.availableInventoryList.forEach(item => {
         this.returnQtyMap[item.uniqueCode]= 0
         item.returnQty = 0;
-      })
+        item.returnQtyWithReceiveUnit = 0;
+        item.returnQtyWithInventoryUnit = 0;
+      }) ;
       this.getReturnedTotalQty();
+
       this.$refs.inventoryTableRef.clearSelection();
     },
 
@@ -688,6 +885,7 @@ export default {
               availableQty: availableQty > 0 ? availableQty : 0, // 确保可用库存不为负数
               unitDictionaryId: item.unitDictionaryId, // 单位信息需要从其他字段获取或留空
               unitDictionaryName:item.unitDictionaryName,
+              receiveProductPackVo: item.receiveProductPackVo, // 收货单位包装信息
               // 批次属性直接提取到顶层，便于表格列直接访问
               lotAttr01Value: item.lotAttr01Value,
               lotAttr02Value: item.lotAttr02Value,

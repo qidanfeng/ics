@@ -15,6 +15,29 @@ router.beforeEach(async(to, from, next) => {
   // set page title
   document.title = getPageTitle(to.meta.title)
 
+  // 当前域名
+  const currentDomain = window.location.hostname
+
+  // 检查是否是目标域名
+  if (process.env.VUE_APP_SHORT_LINK_DOMAIN === currentDomain) {
+    console.log("to.path=",to.path)
+    // 定义允许访问的路径
+    const allowedPaths = [
+      '/short/sc','/404_noback'
+    ]
+    // 检查当前路径是否在允许列表中
+    if (!allowedPaths.includes(to.path)) {
+      // 不允许访问的路径
+      console.warn(`不允许在 ${currentDomain} 域名下访问路径: ${to.path}`)
+      // 显示404页面
+      next('/404_noback')
+    }else {
+      next()
+    }
+    NProgress.done()
+    return
+  }
+
   if (to.path === '/login') {
     // if is logged in, redirect to the home page
     store.dispatch('permission/cleanRoutes');

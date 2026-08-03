@@ -103,7 +103,7 @@ export default {
       }
       row.lineNum = row.lineNum ? row.lineNum : (this.lineMax+1);
       row.originalLineNum = row.originalLineNum ? row.originalLineNum : (this.lineMax+1);
-      row.index = rowIndex;
+      row.index = rowIndex+1;
     },
 
   }

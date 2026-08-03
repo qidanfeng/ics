@@ -33,7 +33,15 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/short/sc',
+    alias: '/supplierConfirm',  // 设置别名
+    component: () => import('@/views/confirm/supplierConfirm'),
+    props: route => ({
+      a: route.query.a,
+      type: 'open'
+    })
+  },
   {
     path: '/check_help_doc',
     component:Layout,
@@ -46,7 +54,15 @@ export const constantRoutes = [
         meta: { title: '知识库'}
       }
     ]
-  }
+  },
+  {
+    path: '/404_noback',
+    component: () => import('@/components/exception/notFound'),
+    props: {
+      showBackButton: false
+    },
+    hidden: true
+  },
 ]
 
 /**

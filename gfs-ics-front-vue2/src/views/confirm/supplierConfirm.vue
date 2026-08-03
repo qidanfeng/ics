@@ -172,7 +172,25 @@ export default {
 
     // 解析URL参数并加载数据
     loadOrderData() {
-       this.orderNumber = this.$route.query.orderNumber;
+      // 当前域名
+      const currentDomain = window.location.hostname;
+      if (process.env.VUE_APP_SHORT_LINK_DOMAIN === currentDomain) {
+        let orderNumberEncrypt = this.$route.query.a;
+        if (!orderNumberEncrypt) {
+          this.$message.warning('参数缺失')
+          return;
+        }
+        try {
+          this.orderNumber = this.base64Decode(orderNumberEncrypt);
+        } catch (error) {
+          this.$message.error('解析参数失败')
+          console.log("解析参数失败",error);
+          return;
+        }
+      }else {
+        this.orderNumber = this.$route.query.orderNumber;
+      }
+
 
       if (!this.orderNumber) {
         this.$message.warning('未找到订单数据')
@@ -186,6 +204,14 @@ export default {
       } catch (error) {
         this.$message.error('解析订单数据失败')
       }
+    },
+    // 简写版本（仅适用于ASCII字符）
+    base64Encode(str) {
+      return btoa(str);
+    },
+
+    base64Decode(base64) {
+      return atob(base64);
     },
     loadOrderInfo(){
 
@@ -203,7 +229,8 @@ export default {
       })
     },
     refresh() {
-      window.location.reload()
+      this.loadOrderData();
+      // window.location.reload()
     },
 
     // 下载PDF文件

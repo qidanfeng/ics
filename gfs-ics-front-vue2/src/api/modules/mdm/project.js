@@ -8,28 +8,28 @@ import isInteger from 'lodash/isInteger'
  * 获取指定客户的项目
  * @param id
  */
-export function  getProjectListByClientId(clientId) {
-  return request({
-    url: process.env.VUE_APP_MDM_BASE_URL + '/project/getProjectListByClientId',
-    method: 'post',
-    data: clientId
-  })
-}
+// export function  getProjectListByClientId(clientId) {
+//   return request({
+//     url: process.env.VUE_APP_MDM_BASE_URL + '/project/getProjectListByClientId',
+//     method: 'post',
+//     data: clientId
+//   })
+// }
 
 export function  getActivatedProjectByClient(clientId) {
   return request({
-    url: process.env.VUE_APP_MDM_BASE_URL + '/project/getActivatedProjectByClientId?clientId='+clientId,
+    url: process.env.VUE_APP_MDM_BASE_URL + '/project/getActivatedProjectByClientId?externalClientId='+clientId,
     method: 'get'
   })
 }
 
-export function queryActivatedUserOwnProjectInfo(params) {
-  return request({
-    url: process.env.VUE_APP_MDM_BASE_URL + '/project/queryActivatedUserOwnProjectInfo',
-    method: 'get',
-    params: requestParam(params, 'get')
-  })
-}
+// export function queryActivatedUserOwnProjectInfo(params) {
+//   return request({
+//     url: process.env.VUE_APP_MDM_BASE_URL + '/project/queryActivatedUserOwnProjectInfo',
+//     method: 'get',
+//     params: requestParam(params, 'get')
+//   })
+// }
 
 export function queryBusinessType(params) {
   return request({

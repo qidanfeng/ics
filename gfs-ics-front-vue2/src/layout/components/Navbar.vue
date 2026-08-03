@@ -21,7 +21,7 @@
           </div>
         </div>
         <search id="header-search" class="right-menu-item" />
-        <help-doc id="help-doc" class="right-menu-item" v-if="isAuth('oms:helpDoc:helpDoc')"/>
+        <help-doc id="help-doc" class="right-menu-item"/>
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
         <lang-select class="right-menu-item hover-effect" />
       </template>
@@ -162,7 +162,7 @@ export default {
     },
     // 获取承运商列表
     loadCarrierOptions() {
-      API.carrier.getActivatedCarrierByClientId(this.clientId).then(({data}) => {
+      API.carrier.getActivatedCarrierByExternalClientId(this.clientId).then(({data}) => {
         if (data.code === 0) {
           this.carrierList = data.data;
           this.$store.dispatch('platForm/setCarriers', this.carrierList)

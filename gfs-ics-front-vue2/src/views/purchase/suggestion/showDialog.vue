@@ -13,9 +13,9 @@
       <el-tab-pane label="订单明细" name="orderDetail">
        <order-detail v-if="activeTab === 'orderDetail'" ref="orderDetailRef"/>
       </el-tab-pane>
-      <el-tab-pane label="费用详情" name="costDetail">
-       <cost-detail v-if="activeTab === 'costDetail'" ref="costDetailRef"/>
-      </el-tab-pane>
+<!--      <el-tab-pane label="费用详情" name="costDetail">-->
+<!--       <cost-detail v-if="activeTab === 'costDetail'" ref="costDetailRef"/>-->
+<!--      </el-tab-pane>-->
       <el-tab-pane label="订单状态记录" name="statusRecord">
        <status-record v-if="activeTab === 'statusRecord'" ref="statusRecordRef"/>
       </el-tab-pane>

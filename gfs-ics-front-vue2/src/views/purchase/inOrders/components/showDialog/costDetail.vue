@@ -1,11 +1,24 @@
 <template>
   <div class="cost-detail-container">
+    <div style="margin-bottom: 4px;">
+      <el-button
+        v-if="isAuth('ics:inOrders:costDetail:reCalc')"
+        type="primary"
+        size="mini"
+        @click="reCalcCost">
+        <i class="el-icon-refresh" style="margin-right: 4px;"></i>
+        重新自动计算费用
+        <el-tooltip placement="top" content="根据计费配置重新自动计算费用，手工创建的费用不受影响">
+          <i class="el-icon-warning-outline section-icon"></i>
+        </el-tooltip>
+      </el-button>
+    </div>
     <!-- 主要内容区域：左右布局 -->
     <div class="main-content">
       <!-- 左侧：应收费用 -->
       <div class="left-section receivable-section">
         <div class="section-title receivable-title">
-          <!--          <el-button type="primary" size="mini" @click="addReceivableRow">+</el-button>-->
+          <el-button v-if="isAuth('ics:inOrders:costDetail:add')" type="primary" size="mini" @click="addReceivableRow">+</el-button>
           <h3>应收费用</h3>
         </div>
         <div class="table-container">
@@ -19,19 +32,33 @@
             style="width: 100%"
             empty-text="暂无数据">
             <u-table-column type="index" label="序号" width="60" align="center"></u-table-column>
-            <u-table-column prop="costItemName" align="center" label="费项名称" min-width="150" show-overflow-tooltip></u-table-column>
+            <u-table-column prop="costItemName" align="center" label="费项名称" min-width="150" show-overflow-tooltip>
+              <template slot-scope="scope">
+                <span v-if="!scope.row.tempNewData">{{ scope.row.costItemName }}</span>
+                <el-select v-else size="mini" @change="value => costItemCodeHandle(value,scope.row)" style="width:100%" v-model="scope.row.costItemCode" filterable placeholder="请选择费项">
+                  <el-option
+                    v-for="item in costItemOptions"
+                    :key="item.costItemCode"
+                    :label="item.costItemName"
+                    :value="item.costItemCode">
+                    <span style="float: left">{{ item.costItemCode }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.costItemName }}</span>
+                  </el-option>
+                </el-select>
+              </template>
+            </u-table-column>
             <u-table-column prop="totalPrice" align="center" label="费用" width="200">
               <template slot-scope="scope">
-                <span v-if="!scope.row.editing">{{ scope.row.totalPrice }}</span>
-                <u-input-number v-else v-model="scope.row.totalPrice" size="mini" :min="0" :precision="2" style="width: 100%"></u-input-number>
+                <span v-if="!scope.row.tempNewData">{{ scope.row.totalPrice }}</span>
+                <el-input-number v-else v-model="scope.row.totalPrice" size="mini" :min="0" :precision="2" style="width: 100%"></el-input-number>
               </template>
             </u-table-column>
             <u-table-column label="操作" width="160" align="center">
               <template slot-scope="scope">
-                <!--                  <el-button size="mini" type="text" v-if="!scope.row.editing" @click="editReceivableRow(scope.row)">修改</el-button>-->
-                <!--                  <el-button size="mini" type="text" v-else  @click="saveReceivableRow(scope.row)">保存</el-button>-->
-                <el-button size="mini" type="text"  @click="viewReceivableRow(scope.row)">查看</el-button>
-                <!--                  <el-button size="mini" type="text" class="delete-btn" @click="deleteReceivableRow(scope.row)">删除</el-button>-->
+<!--                <el-button size="mini" type="text" v-if="!scope.row.editing" @click="editReceivableRow(scope.row)">修改</el-button>-->
+                <el-button v-if="isAuth('ics:inOrders:costDetail:add') && scope.row.tempNewData" size="mini" type="text"  @click="saveReceivableRow(scope.row)">保存</el-button>
+                <el-button size="mini" type="text" v-else @click="viewReceivableRow(scope.row)">查看</el-button>
+                <el-button v-if="isAuth('ics:inOrders:costDetail:add') && scope.row.tempNewData" size="mini" type="text"  class="delete-btn" @click="deleteReceivableRow(scope.row)">删除</el-button>
               </template>
             </u-table-column>
           </u-table>
@@ -40,7 +67,7 @@
       <!-- 右侧：应付费用 -->
       <div class="right-section payable-section">
         <div class="section-title payable-title">
-          <!--          <el-button type="primary" size="mini" @click="addPayableRow">+</el-button>-->
+          <el-button v-if="isAuth('ics:inOrders:costDetail:add')" type="primary" size="mini" @click="addPayableRow">+</el-button>
           <h3>应付费用</h3>
         </div>
         <div class="table-container">
@@ -54,19 +81,33 @@
             style="width: 100%"
             empty-text="暂无数据">
             <u-table-column type="index" label="序号" width="60" align="center"></u-table-column>
-            <u-table-column prop="costItemName" align="center" label="费项名称" min-width="150" show-overflow-tooltip></u-table-column>
-            <u-table-column prop="amount" align="center" label="费用" width="200">
+            <u-table-column prop="costItemName" align="center" label="费项名称" min-width="150" show-overflow-tooltip>
               <template slot-scope="scope">
-                <span v-if="!scope.row.editing">{{ scope.row.totalPrice }}</span>
+                <span v-if="!scope.row.tempNewData">{{ scope.row.costItemName }}</span>
+                <el-select v-else size="mini" @change="value => costItemCodeHandle(value,scope.row)" style="width:100%" v-model="scope.row.costItemCode" filterable placeholder="请选择费项">
+                  <el-option
+                    v-for="item in costItemOptions"
+                    :key="item.costItemCode"
+                    :label="item.costItemName"
+                    :value="item.costItemCode">
+                    <span style="float: left">{{ item.costItemCode }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.costItemName }}</span>
+                  </el-option>
+                </el-select>
+              </template>
+            </u-table-column>
+            <u-table-column prop="totalPrice" align="center" label="费用" width="200">
+              <template slot-scope="scope">
+                <span v-if="!scope.row.tempNewData">{{ scope.row.totalPrice }}</span>
                 <el-input-number v-else v-model="scope.row.totalPrice" size="mini" :min="0" :precision="2" style="width: 100%"></el-input-number>
               </template>
             </u-table-column>
             <u-table-column label="操作" width="160" align="center">
               <template slot-scope="scope">
-                <!--                  <el-button type="text" size="mini" v-if="!scope.row.editing"  @click="editPayableRow(scope.row)">修改</el-button>-->
-                <!--                  <el-button type="text" size="mini" v-else  @click="savePayableRow(scope.row)">保存</el-button>-->
-                <el-button type="text" size="mini" @click="viewPayableRow(scope.row)">查看</el-button>
-                <!--                  <el-button type="text" size="mini" class="delete-btn" @click="deletePayableRow(scope.row)">删除</el-button>-->
+<!--                <el-button type="text" size="mini" v-if="!scope.row.editing"  @click="editPayableRow(scope.row)">修改</el-button>-->
+                <el-button v-if="isAuth('ics:inOrders:costDetail:add') && scope.row.tempNewData" type="text" size="mini"   @click="savePayableRow(scope.row)">保存</el-button>
+                <el-button type="text" size="mini" v-else @click="viewPayableRow(scope.row)">查看</el-button>
+                <el-button v-if="isAuth('ics:inOrders:costDetail:add') && scope.row.tempNewData" type="text" size="mini"  class="delete-btn" @click="deletePayableRow(scope.row)">删除</el-button>
               </template>
             </u-table-column>
           </u-table>
@@ -89,12 +130,15 @@
         <div class="summary-value" :class="profitClass">¥{{ formatNumber(profit) }}</div>
       </div>
     </div>
+    <cost-detail-info ref="costDetailInfoRef" @refreshData="refreshData"/>
   </div>
 </template>
 <script>
 import { UTable, UTableColumn } from 'umy-ui'
 import ShowDialog from "@/views/purchase/inOrders/showDialog";
 import API from "@/api";
+import CostDetailInfo from "./costDetailInfo";
+import {billSave} from "@/api/modules/purchase/inOrder";
 export default {
   name: "CostDetail",
   data() {
@@ -109,7 +153,8 @@ export default {
       // 应付总计
       payableTotal: 0,
       // 利润
-      profit: 0
+      profit: 0,
+      costItemOptions:[],
     }
   },
   computed: {
@@ -119,7 +164,8 @@ export default {
   },
   components:{
     UTable,
-    UTableColumn
+    UTableColumn,
+    CostDetailInfo,
   },
   methods: {
     /**
@@ -128,6 +174,14 @@ export default {
      */
     async init(data) {
       this.orderNumber = data.orderNumber;
+      await this.loadBillData();
+      this.loadAllCostItem();
+      // 计算总计
+      this.calculateReceivableTotal()
+      this.calculatePayableTotal()
+
+    },
+    async refreshData() {
       await this.loadBillData();
       // 计算总计
       this.calculateReceivableTotal()
@@ -141,9 +195,15 @@ export default {
           if(data.code == 0 && data.data){
             if(data.data.arDetailList){
               this.receivableData = data.data.arDetailList;
+              this.receivableData.forEach((item, idx) => {
+                item.index = idx + 1;
+              });
             }
             if(data.data.apDetailList){
               this.payableData = data.data.apDetailList;
+              this.payableData.forEach((item, idx) => {
+                item.index = idx + 1;
+              });
             }
 
           }
@@ -171,14 +231,49 @@ export default {
         maximumFractionDigits: 2
       })
     },
+    costItemCodeHandle(value,row){
+      const item = this.costItemOptions.find(item=> item.costItemCode == value)
+      if(item){
+        row.costItemName = item.costItemName;
+      }
+    },
+    loadAllCostItem(){
+      API.billItemConfig.getAllCostItemCodeList().then(({data})=>{
+        if(data.code == 0 && data.data){
+          this.costItemOptions = data.data;
+        }
+      }).catch(error=>{
 
+      })
+    },
+    reCalcCost() {
+      this.$confirm(`确定重新自动计算费用吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        API.inOrder.billReCalc(this.orderNumber).then(async ({data})=>{
+          if (data.code === 0) {
+            this.$message.success('重新自动计算费用成功');
+            await this.loadBillData();
+            // 计算总计
+            this.calculateReceivableTotal()
+            this.calculatePayableTotal()
+          }
+        }).catch(error=>{
+
+        })
+      });
+    },
     // 应收费用相关方法
     addReceivableRow() {
       const newIndex = this.receivableData.length + 1;
       this.receivableData.push({
         index: newIndex,
-        feeName: '新费用项',
-        amount: 0,
+        tempNewData: true,
+        totalPrice: 0,
+        costType: 1,
+        orderNumber: this.orderNumber,
         editing: true
       });
     },
@@ -187,16 +282,29 @@ export default {
     },
     saveReceivableRow(row) {
       row.editing = false;
-      this.calculateReceivableTotal();
+      let api = null;
+      if(row.id){
+        api = API.inOrder.billUpdate([row]);
+      }else {
+        api = API.inOrder.billSave([row]);
+        row.costPrice = row.totalPrice;
+      }
+      api.then(async ({data})=>{
+        if (data.code === 0) {
+          this.$message.success('保存成功');
+          await this.loadBillData();
+          this.calculateReceivableTotal();
+        }
+      }).catch(error=>{
+
+      })
+
     },
     viewReceivableRow(row) {
-      this.$message({
-        message: `查看应收费用: ${row.feeName}`,
-        type: 'info'
-      });
+      this.$refs.costDetailInfoRef.init(row);
     },
     deleteReceivableRow(row) {
-      this.$confirm(`确定要删除"${row.feeName}"吗?`, '提示', {
+      this.$confirm(`确定要删除第[${row.index}]行吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -225,8 +333,10 @@ export default {
       const newIndex = this.payableData.length + 1;
       this.payableData.push({
         index: newIndex,
-        feeName: '新费用项',
-        amount: 0,
+        tempNewData: true,
+        totalPrice: 0,
+        costType: 2,
+        orderNumber: this.orderNumber,
         editing: true
       });
     },
@@ -235,16 +345,28 @@ export default {
     },
     savePayableRow(row) {
       row.editing = false;
-      this.calculatePayableTotal();
+      let api = null;
+      if(row.id){
+        api = API.inOrder.billUpdate([row]);
+      }else {
+        api = API.inOrder.billSave([row]);
+        row.costPrice = row.totalPrice;
+      }
+      api.then(async ({data})=>{
+        if (data.code === 0) {
+          this.$message.success('保存成功');
+          await this.loadBillData();
+          this.calculatePayableTotal();
+        }
+      }).catch(error=>{
+
+      })
     },
     viewPayableRow(row) {
-      this.$message({
-        message: `查看应付费用: ${row.feeName}`,
-        type: 'info'
-      });
+      this.$refs.costDetailInfoRef.init(row);
     },
     deletePayableRow(row) {
-      this.$confirm(`确定要删除"${row.feeName}"吗?`, '提示', {
+      this.$confirm(`确定要删除第[${row.index}]行吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

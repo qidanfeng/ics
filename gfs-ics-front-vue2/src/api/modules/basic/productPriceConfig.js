@@ -46,6 +46,17 @@ export function deleteByIds(params) {
 }
 
 /**
+ * 批量激活/关闭产品订存配置
+ */
+export function openOrClose(params) {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/productPriceConfig/openOrClose',
+    method: 'post',
+    data: params
+  })
+}
+
+/**
  * 根据ID查询产品订存配置详情
  */
 export function info(params) {
@@ -133,11 +144,18 @@ export function getProjectByWarehouseCode(clientId, warehouseCode) {
 
 
 /**
- * 产品价格配置导入
+ * 产品价格配置导入-新增
  */
 export function importFile () {
   return requestUrl(process.env.VUE_APP_ICS_BASE_URL +`/productPriceConfig/import`)
 }
+/**
+ * 产品价格配置导入-更新
+ */
+export function importFileForUpdate () {
+  return requestUrl(process.env.VUE_APP_ICS_BASE_URL +`/productPriceConfig/importForUpdate`)
+}
+
 /**
  * 导出
  */

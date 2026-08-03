@@ -22,13 +22,20 @@
           </el-select>
         </el-col>
         <el-col :span="4">
-          <el-select size="mini" style="width:100%" v-model="searchForm.supplierId" placeholder="请选择供应商" clearable>
+          <el-select size="mini" style="width:100%" v-model="searchForm.supplierId" placeholder="请选择供应商" filterable clearable
+                     :filter-method="supplierFilterHandle"
+                     @visible-change="supplierOptionsForSelect = suppliers"
+          >
             <el-option
-              v-for="item in suppliers"
+              style="width:400px"
+              v-for="item in supplierOptionsForSelect"
               :key="item.supplierId"
               :label="item.supplierName"
               :value="item.supplierId"
-            />
+            >
+              <span style="float: left">{{ item.supplierCode }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.supplierName }}</span>
+            </el-option>
           </el-select>
         </el-col>
         <el-col :span="4">
@@ -57,12 +64,24 @@
             format="yyyy-MM-dd HH:mm:ss"
           />
         </el-col>
-        <el-col :span="18" >
+        <el-col :span="4">
+          <el-select size="mini" style="width:100%" v-model="searchForm.status" placeholder="请选择状态" clearable>
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="14" >
           <el-button size="mini" type="primary" @click="handleSearch" :loading="searchLoading">查询</el-button>
           <el-button size="mini" v-if="isAuth('ics:productPriceConfig:add')" @click="handleAdd">新增</el-button>
           <el-button size="mini" type="danger" v-if="isAuth('ics:productPriceConfig:delete')" :disabled="selectedRow.length === 0" :loading="deleteLoading" @click="handleDelete">删除</el-button>
+          <el-button size="mini" v-if="isAuth('ics:productPriceConfig:activateOrNot')" type="primary" :disabled="selectedRow.length === 0" :loading="openOrCloseLoading"  @click="handleOpenOrClose()">激活/关闭</el-button>
           <el-button size="mini" v-if="isAuth('ics:productPriceConfig:export')" :loading="exportLoading" @click="handleExport">导出</el-button>
-          <el-button size="mini" v-if="isAuth('ics:productPriceConfig:import')" :loading="importLoading" @click="handleImport">导入</el-button>
+          <el-button size="mini" v-if="isAuth('ics:productPriceConfig:import')" :loading="importLoading" @click="handleImport(false)">导入-新增</el-button>
+          <el-button size="mini" v-if="isAuth('ics:productPriceConfig:importForUpdate')" :loading="importLoading" @click="handleImport(true)">导入-更新</el-button>
         </el-col>
       </el-row>
     </el-card>
@@ -84,11 +103,11 @@
             @selection-change="handleSelectionChange"
           >
           <u-table-column type="selection" width="55" align="center" fixed="left"/>
-            <u-table-column type="index" width="55" align="center" />
+            <u-table-column type="index" label="序号" width="55" align="center" />
             <u-table-column prop="warehouseCode" label="仓库编码"  width="100" align="center" />
           <u-table-column prop="warehouseName" label="仓库名称"  width="150" align="center"show-overflow-tooltip />
             <u-table-column prop="supplierCode" label="供应商代码"  width="100" align="center"/>
-          <u-table-column prop="supplierName" label="供应商名称"  width="150" align="center" show-overflow-tooltip />
+          <u-table-column prop="supplierName" label="供应商名称"  width="250" align="center" show-overflow-tooltip />
             <u-table-column prop="projectCode" label="货主代码" width="100" align="center"/>
           <u-table-column prop="projectName" label="货主名称" min-width="120" align="center" show-overflow-tooltip/>
             <u-table-column prop="productNumber" label="产品编码" width="120" align="center" show-overflow-tooltip />
@@ -97,7 +116,18 @@
           <u-table-column prop="factoryPrice" label="出厂价" width="100" align="center" />
           <u-table-column prop="purchasePrice" label="采购价" width="100" align="center" />
           <u-table-column prop="transferPrice" label="调拨价" width="100" align="center" />
-          <u-table-column prop="orderCycleTime" label="订货周期(天)" width="120" align="center" />
+          <u-table-column prop="safeStockDay" label="安全库存天数" width="120" align="center" />
+          <u-table-column prop="safeStockQuantity" label="安全库存数量(收货单位)" width="120" align="center" />
+<!--          <u-table-column prop="orderCycleTime" label="订货周期(天)" width="120" align="center" />-->
+<!--          <u-table-column prop="minOrderQuantity" label="最小起订量(收货单位)" width="150" align="center" />-->
+          <u-table-column prop="remarks" label="备注" width="100" align="center" show-overflow-tooltip/>
+          <u-table-column prop="status" label="状态" width="80" align="center">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="scope.row.status === 1" disabled>
+              </el-switch>
+            </template>
+          </u-table-column>
           <u-table-column prop="createdBy" label="创建人" width="100" align="center" show-overflow-tooltip/>
           <u-table-column prop="createdTime" label="创建时间" width="160" align="center" />
           <u-table-column prop="lastModifiedBy" label="修改人" width="100" align="center" show-overflow-tooltip/>
@@ -165,9 +195,11 @@ export default {
       submitting: false,
       searchLoading: false,
       deleteLoading: false,
+      openOrCloseLoading: false,
       importLoading: false,
       exportLoading: false,
       searchForm: {
+        status: 1,
         productNumber: '',
         productName: '',
         warehouseCode: '',
@@ -175,9 +207,9 @@ export default {
         projectId: '',
         clientId: ''
       },
+      supplierOptionsForSelect: [],
       createdTimeRange: [],
       warehouseOptions: [],
-      supplierOptions: [],
       projectOptions: [],
       clientOptions: [],
       tableData: [],
@@ -187,6 +219,10 @@ export default {
         size: 20,
         total: 1
       },
+      statusOptions: [
+        { value: 1, label: '激活' },
+        { value: 0, label: '关闭' }
+      ],
       tableHeight: 500, // 默认高度
       showUpdateOrAdd: false // 控制新增/编辑子组件显示
     }
@@ -205,7 +241,6 @@ export default {
   activated() {
     //设置初始查询条件
     this.setInitSearchForm();
-
     //查询数据
     this.handleSearch();
   },
@@ -261,11 +296,28 @@ export default {
       });
     },
 
+    supplierFilterHandle(val) {
+      if (val) {
+        this.supplierOptionsForSelect = this.suppliers.filter((item => {
+          if (!!~item.supplierCode.indexOf(val) || !!~item.supplierCode.toUpperCase().indexOf(val.toUpperCase()) || !!~item.supplierName.indexOf(val) || !!~item.supplierName.toUpperCase().indexOf(val.toUpperCase())) {
+            return true
+          }
+        }))
+      } else {
+        this.supplierOptionsForSelect = this.suppliers;
+      }
+    },
+
     handleSearch() {
       this.searchLoading = true
       this.loading = true
-      this.searchForm.createdTimeStart = this.createdTimeRange[0];
-      this.searchForm.createdTimeEnd = this.createdTimeRange[1];
+      if (this.createdTimeRange && this.createdTimeRange.length === 2) {
+        this.searchForm.createdTimeStart = this.createdTimeRange[0]
+        this.searchForm.createdTimeEnd = this.createdTimeRange[1]
+      }else {
+        this.searchForm.createdTimeStart = null;
+        this.searchForm.createdTimeEnd = null;
+      }
       // 设置分页参数
       this.searchForm.page = this.pagination.page;
       this.searchForm.limit = this.pagination.size;
@@ -330,16 +382,46 @@ export default {
         this.deleteLoading = false
       })
     },
-
-    handleImport() {
+    handleOpenOrClose() {
+      if (this.selectedRow.length === 0) {
+        this.$message.warning('请先选择要激活/关闭的产品价格配置')
+        return
+      }
+      this.openOrCloseLoading = true
+      this.$confirm('确认激活/关闭该产品价格配置吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const ids = this.selectedRow.map(item => item.id)
+        API.productPriceConfig.openOrClose(ids).then(({ data }) => {
+          if (data && data.code === 0) {
+            this.$message.success('激活/关闭成功')
+            this.handleSearch()
+          }
+          this.openOrCloseLoading = false
+        }).catch((error)=>{
+          this.openOrCloseLoading = false
+        })
+      }).catch(() => {
+        this.openOrCloseLoading = false
+      })
+    },
+    handleImport(isUpdate) {
       this.importLoading = true
       this.uploadVisible = true
-      let {url,name} =getImportTempletsUrl('1000');
+      let templateCode = "1000";
+      let importApiUrl = API.productPriceConfig.importFile();
+      if(isUpdate){
+        templateCode = "1002";
+        importApiUrl = API.productPriceConfig.importFileForUpdate();
+      }
+      let {url,name} =getImportTempletsUrl(templateCode);
       console.log(url,name)
       this.templateUrl.url = url;
       this.templateUrl.name = name;
       this.$nextTick(() => {
-        let url = API.productPriceConfig.importFile();
+        let url = importApiUrl;
         let accept = '.xls,.xlsx';
         this.$refs.upload.init(url,accept);
         this.importLoading = false

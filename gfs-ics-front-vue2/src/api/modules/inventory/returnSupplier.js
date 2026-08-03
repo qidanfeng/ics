@@ -238,6 +238,26 @@ export function billUpdate(params) {
 }
 
 /**
+ * 删除费用
+ */
+export function billDelete(params) {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/returnSupplierOutOrder/bill/delete',
+    method: 'post',
+    data: params
+  })
+}
+/**
+ * 重新自动计算费用
+ */
+export function billReCalc(orderNumber) {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/returnSupplierOutOrder/bill/reCalc?orderNumber='+orderNumber,
+    method: 'get'
+  })
+}
+
+/**
  * 导出退供出库单
  */
 export function exportFile(params) {

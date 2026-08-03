@@ -183,7 +183,7 @@
                 <el-input-number
                   v-model="scope.row.quantity"
                   :min="1"
-                  :max="scope.row.availableQty"
+                  :max="scope.row.quantityMaxLimit"
                   size="mini"
                   @change="handleTransferQtyChange(scope.$index)"
                 />
@@ -293,7 +293,6 @@ export default {
       // 选项数据
       warehouseOptions: [],
       projectOptions: [],
-      supplierOptions: [],
       carrierOptions: []
     }
   },
@@ -608,9 +607,9 @@ export default {
     // 调拨数量变化处理
     handleTransferQtyChange(index) {
       const detail = this.formData.detailList[index]
-      if (detail.quantity > detail.availableQty) {
-        this.$message.warning(`调拨数量不能超过可用库存（${detail.availableQty}）`)
-        detail.quantity = detail.availableQty
+      if (detail.quantity > detail.quantityMaxLimit) {
+        this.$message.warning(`调拨数量不能超过可用库存（${detail.quantityMaxLimit}）`)
+        detail.quantity = detail.quantityMaxLimit
       }
     },
 

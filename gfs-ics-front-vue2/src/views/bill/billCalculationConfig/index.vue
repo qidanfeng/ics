@@ -14,13 +14,20 @@
           </el-select>
         </el-col>
         <el-col :span="4">
-          <el-select size="mini" filterable style="width:100%" v-model="searchForm.supplierId" placeholder="请选择供应商" clearable>
+          <el-select size="mini" style="width:100%" v-model="searchForm.supplierId" placeholder="请选择供应商" filterable clearable
+                     :filter-method="supplierFilterHandle"
+                     @visible-change="supplierOptionsForSelect = suppliers"
+          >
             <el-option
-              v-for="item in suppliers"
+              style="width:400px"
+              v-for="item in supplierOptionsForSelect"
               :key="item.supplierId"
               :label="item.supplierName"
               :value="item.supplierId"
-            />
+            >
+              <span style="float: left">{{ item.supplierCode }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.supplierName }}</span>
+            </el-option>
           </el-select>
         </el-col>
         <el-col :span="4">
@@ -60,15 +67,16 @@
             @selection-change="handleSelectionChange"
           >
           <u-table-column type="selection" width="55" align="center" fixed="left"/>
-            <u-table-column type="index" width="55" align="center" />
+            <u-table-column type="index" label="序号" width="55" align="center" />
           <u-table-column prop="costTypeName" label="费用类型" width="100" align="center" show-overflow-tooltip />
-          <u-table-column prop="supplierName" label="供应商" min-width="120" align="center" show-overflow-tooltip />
-          <u-table-column prop="clientName" label="客户" min-width="120" align="center" show-overflow-tooltip />
+          <u-table-column prop="supplierName" label="供应商" min-width="250" align="center" show-overflow-tooltip />
+          <u-table-column prop="warehouseName" label="仓库" min-width="120" align="center" show-overflow-tooltip/>
           <u-table-column prop="projectName" label="货主" min-width="120" align="center" show-overflow-tooltip/>
           <u-table-column prop="documentTypeName" label="单据类型" width="100" align="center" show-overflow-tooltip />
           <u-table-column prop="deliveryMethodName" label="送货方式" width="100" align="center" show-overflow-tooltip />
           <u-table-column prop="costItemCode" label="费项编码" width="120" align="center" show-overflow-tooltip />
-          <u-table-column prop="calculationMethodName" label="计算方式" width="120" align="center" show-overflow-tooltip />
+          <u-table-column prop="costItemName" label="费项名称" width="120" align="center" show-overflow-tooltip />
+          <u-table-column prop="calculationMethodName" label="计算方式" width="200" align="center" show-overflow-tooltip />
           <u-table-column prop="createdBy" label="创建人" width="100" align="center" show-overflow-tooltip/>
           <u-table-column prop="createdTime" label="创建时间" width="160" align="center" />
           <u-table-column prop="lastModifiedBy" label="修改人" width="100" align="center" show-overflow-tooltip/>
@@ -106,6 +114,7 @@ import { UTable, UTableColumn } from 'umy-ui'
 import UpdateOrAdd from './updateOrAdd.vue'
 import API from "@/api";
 import {mapGetters} from "vuex";
+import {getDocumentTypeListForBill} from "@/api/modules/constant/orderConstant";
 export default {
   name: "CostCalculationConfig",
   components: {
@@ -130,13 +139,14 @@ export default {
         supplierId: '',
         projectId: '',
         documentTypeCode: '',
-        deliveryMethodCode: '',
+        deliveryMethodCodeList: [],
         calculationMethodCode: '',
         costItemCode: '',
         clientId: '',
         createdTimeStart: '',
         createdTimeEnd: ''
       },
+      supplierOptionsForSelect: [],
       costTypeOptions: [],
       documentTypeOptions: [],
       deliveryMethodOptions: [],
@@ -204,7 +214,7 @@ export default {
       })
     },
     loadDocumentTypeList(){
-      API.orderConstant.getDocumentTypeList().then(({data})=>{
+      API.orderConstant.getDocumentTypeListForBill().then(({data})=>{
         if(data.data && data.code ==0 ){
           this.documentTypeOptions = data.data;
         }
@@ -236,7 +246,7 @@ export default {
         supplierId: '',
         projectId: '',
         documentTypeCode: '',
-        deliveryMethodCode: '',
+        deliveryMethodCodeList: [],
         calculationMethodCode: '',
         costItemCode: '',
         clientId: this.client.id,
@@ -305,7 +315,18 @@ export default {
       // 处理表单提交
       this.showUpdateOrAdd = false
       this.handleSearch()
-    }
+    },
+    supplierFilterHandle(val) {
+      if (val) {
+        this.supplierOptionsForSelect = this.suppliers.filter((item => {
+          if (!!~item.supplierCode.indexOf(val) || !!~item.supplierCode.toUpperCase().indexOf(val.toUpperCase()) || !!~item.supplierName.indexOf(val) || !!~item.supplierName.toUpperCase().indexOf(val.toUpperCase())) {
+            return true
+          }
+        }))
+      } else {
+        this.supplierOptionsForSelect = this.suppliers;
+      }
+    },
   }
 }
 </script>

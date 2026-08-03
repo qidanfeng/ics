@@ -22,13 +22,20 @@
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-          <el-select size="mini" style="width: 100%"  v-model="searchForm.supplierId" placeholder="请选择供应商" clearable>
+          <el-select size="mini" style="width:100%" v-model="searchForm.supplierId" placeholder="请选择供应商" filterable clearable
+                     :filter-method="supplierFilterHandle"
+                     @visible-change="supplierOptionsForSelect = suppliers"
+          >
             <el-option
-              v-for="item in suppliers"
+              style="width:400px"
+              v-for="item in supplierOptionsForSelect"
               :key="item.supplierId"
               :label="item.supplierName"
               :value="item.supplierId"
-            />
+            >
+              <span style="float: left">{{ item.supplierCode }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.supplierName }}</span>
+            </el-option>
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
@@ -42,7 +49,7 @@
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-          <el-select size="mini" style="width: 100%"  v-model="searchForm.deliveryMethodCode" placeholder="请选择送货方式" clearable>
+          <el-select size="mini" style="width: 100%"  v-model="searchForm.deliveryMethodCodeList" placeholder="请选择送货方式" clearable multiple>
             <el-option
               v-for="item in deliveryMethodOptions"
               :key="item.value"
@@ -64,7 +71,7 @@
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="3">
-          <el-select size="mini" style="width: 100%"  v-model="searchForm.orderStatus" placeholder="请选择订单状态" clearable>
+          <el-select size="mini" style="width: 100%"  v-model="searchForm.orderStatusList" placeholder="请选择订单状态" clearable multiple>
             <el-option
               v-for="item in orderStatusOptions"
               :key="item.value"
@@ -153,11 +160,11 @@
           style="width: 100%; height: 100%;"
           @selection-change="handleSelectionChange"
         >
-          <u-table-column type="index" width="55" align="center" />
+          <u-table-column type="index" label="序号" width="55" align="center" />
           <u-table-column type="selection" width="55" align="center" fixed="left" style="background-color: white"/>
           <u-table-column prop="suggestionOrderNumber" label="采购订单号" width="180" align="center" />
           <u-table-column prop="deliveryWarehouseName" label="送货仓库" width="120" align="center" />
-          <u-table-column prop="supplierName" label="供应商" width="150" align="center" show-overflow-tooltip />
+          <u-table-column prop="supplierName" label="供应商" width="250" align="center" show-overflow-tooltip />
           <u-table-column prop="projectName" label="货主" width="120" align="center" />
           <u-table-column prop="omsOrderNumber" label="OMS订单号" width="180" align="center" />
           <u-table-column prop="deliveryMethodName" label="送货方式" width="100" align="center" />
@@ -176,6 +183,7 @@
 
           </u-table-column>
           <u-table-column prop="estimatedDeliveryDate" label="预计到仓日期" width="120" align="center" />
+          <u-table-column prop="inStockFinishTime" label="入库完成时间" width="160" align="center" />
           <u-table-column prop="orderNumber" label="采购入库单号" width="180" align="center" />
           <u-table-column prop="createdBy" label="创建人" width="100" align="center"  show-overflow-tooltip/>
           <u-table-column prop="createdTime" label="创建时间" width="160" align="center" />
@@ -245,10 +253,11 @@ export default {
         deliveryWarehouseCode: '',
         supplierId: '',
         projectId: '',
-        deliveryMethodCode: '',
+        deliveryMethodCodeList: [],
         carrierId: '',
-        orderStatus: ''
+        orderStatusList: [],
       },
+      supplierOptionsForSelect: [],
       deliveryMethodOptions: [],
       carrierOptions: [],
       orderStatusOptions: [],
@@ -387,6 +396,9 @@ export default {
         if (this.createdTimeRange && this.createdTimeRange.length === 2) {
           this.searchForm.createdTimeStart = this.createdTimeRange[0]
           this.searchForm.createdTimeEnd = this.createdTimeRange[1]
+        }else {
+          this.searchForm.createdTimeStart = null;
+          this.searchForm.createdTimeEnd = null;
         }
 
          // 设置分页参数
@@ -691,6 +703,17 @@ export default {
         90: 'status-text-cancelled'    // 已取消
       }
       return statusMap[status] || 'status-text-default'
+    },
+    supplierFilterHandle(val) {
+      if (val) {
+        this.supplierOptionsForSelect = this.suppliers.filter((item => {
+          if (!!~item.supplierCode.indexOf(val) || !!~item.supplierCode.toUpperCase().indexOf(val.toUpperCase()) || !!~item.supplierName.indexOf(val) || !!~item.supplierName.toUpperCase().indexOf(val.toUpperCase())) {
+            return true
+          }
+        }))
+      } else {
+        this.supplierOptionsForSelect = this.suppliers;
+      }
     },
   }
 }

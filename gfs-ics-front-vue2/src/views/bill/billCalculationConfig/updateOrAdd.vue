@@ -20,16 +20,21 @@
         <el-col :span="8">
           <el-form-item label="供应商" prop="supplierId">
             <el-select
+              filterable
+              :filter-method="supplierFilterHandle"
+              @visible-change="supplierOptionsForSelect = suppliers"
               v-model="currentFormData.supplierId"
               placeholder="请选择供应商"
               style="width: 100%"
             >
               <el-option
-                v-for="item in suppliers"
+                v-for="item in supplierOptionsForSelect"
                 :key="item.supplierId"
                 :label="item.supplierName"
-                :value="item.supplierId"
-              />
+                :value="item.supplierId">
+                <span style="float: left">{{ item.supplierCode }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.supplierName }}</span>
+              </el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -37,7 +42,7 @@
           <el-form-item label="仓库" prop="warehouseCode">
             <el-select
               v-model="currentFormData.warehouseCode"
-              placeholder="请选择送货仓库"
+              placeholder="请选择仓库"
               style="width: 100%"
             >
               <el-option
@@ -114,13 +119,15 @@
 
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-form-item label="费项编码" prop="costItemCode">
-            <el-select size="mini" @change="costItemCodeHandle" style="width:100%" v-model="currentFormData.costItemCode" filterable placeholder="请选择费项编码">
+          <el-form-item label="费项" prop="costItemCode">
+            <el-select size="mini" @change="costItemCodeHandle" style="width:100%" v-model="currentFormData.costItemCode" filterable placeholder="请选择费项">
               <el-option
                 v-for="item in costItemOptions"
                 :key="item.costItemCode"
                 :label="item.costItemName"
                 :value="item.costItemCode">
+                <span style="float: left">{{ item.costItemCode }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.costItemName }}</span>
               </el-option>
             </el-select>
           </el-form-item>
@@ -271,9 +278,9 @@ export default {
         remarks: ''
       },
       submitButtonLoading: false,
+      supplierOptionsForSelect: [],
       deliveryMethodOptions: [],
       calculationMethodOptions: [],
-      supplierOptions: [],
       projectOptions: [],
       warehouseOptions:[],
       costItemOptions: [],
@@ -284,6 +291,9 @@ export default {
         ],
         supplierId: [
           { required: true, message: '请选择供应商', trigger: 'change' }
+        ],
+        warehouseCode: [
+          { required: true, message: '请选择仓库', trigger: 'change' }
         ],
         clientId: [
           { required: true, message: '客户信息不能为空', trigger: 'blur' }
@@ -298,7 +308,7 @@ export default {
           { required: true, message: '请选择送货方式', trigger: 'change' }
         ],
         costItemCode: [
-          { required: true, message: '请选择费项编码', trigger: 'change' }
+          { required: true, message: '请选择费项', trigger: 'change' }
         ],
         calculationMethodCode: [
           { required: true, message: '请选择计算方式', trigger: 'change' }
@@ -323,6 +333,8 @@ export default {
         clientId: this.client.id,
         clientCode: this.client.code,
         clientName: this.client.cnName,
+        warehouseCode: null,
+        warehouseName: null,
         projectId: '',
         projectCode: '',
         projectName: '',
@@ -339,7 +351,8 @@ export default {
         lastModifiedTime: '',
         remarks: ''
       }
-      this.dialogVisible = true
+      this.dialogVisible = true;
+      this.supplierOptionsForSelect = this.suppliers;
       this.loadAllCostItem();
       this.loadCalculationMethodOptions();
       // 清除验证
@@ -355,7 +368,8 @@ export default {
       this.dialogTitle = '编辑费用计算配置'
       this.isEdit = true
       this.currentFormData = { ...rowData }
-      this.dialogVisible = true
+      this.dialogVisible = true;
+      this.supplierOptionsForSelect = this.suppliers;
       this.loadCalculationMethodOptions();
       this.loadAllCostItem();
       this.loadDeliveryMethodOptions();
@@ -542,7 +556,18 @@ export default {
       if (this.$refs.form) {
         this.$refs.form.resetFields()
       }
-    }
+    },
+    supplierFilterHandle(val) {
+      if (val) {
+        this.supplierOptionsForSelect = this.suppliers.filter((item => {
+          if (!!~item.supplierCode.indexOf(val) || !!~item.supplierCode.toUpperCase().indexOf(val.toUpperCase()) || !!~item.supplierName.indexOf(val) || !!~item.supplierName.toUpperCase().indexOf(val.toUpperCase())) {
+            return true
+          }
+        }))
+      } else {
+        this.supplierOptionsForSelect = this.suppliers;
+      }
+    },
   }
 }
 </script>

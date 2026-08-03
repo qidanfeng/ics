@@ -63,7 +63,7 @@
       </el-row>
       <el-row :gutter="10" style="margin-top:10px">
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="3">
-          <el-select size="mini" style="width:100%" v-model="searchForm.orderStatus" placeholder="请选择订单状态" clearable>
+          <el-select size="mini" style="width:100%" v-model="searchForm.orderStatusList" placeholder="请选择订单状态" clearable multiple>
             <el-option
               v-for="item in orderStatusOptions"
               :key="item.value"
@@ -73,7 +73,7 @@
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="3">
-          <el-select size="mini" style="width:100%" v-model="searchForm.outStockStauts" placeholder="请选择出库状态" clearable>
+          <el-select size="mini" style="width:100%" v-model="searchForm.outStockStatus" placeholder="请选择出库状态" clearable>
             <el-option
               v-for="item in outStockStatusOptions"
               :key="item.value"
@@ -83,7 +83,7 @@
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="3">
-          <el-select size="mini" style="width: 100%"  v-model="searchForm.orderStatus" placeholder="请选择下发状态" clearable>
+          <el-select size="mini" style="width: 100%"  v-model="searchForm.issueStatus" placeholder="请选择下发状态" clearable>
             <el-option
               v-for="item in issueStatusOptions"
               :key="item.value"
@@ -147,7 +147,7 @@
           style="width: 100%; height: 100%;"
           @selection-change="handleSelectionChange">
           <u-table-column type="selection" width="55" align="center" fixed="left"/>
-          <u-table-column type="index" width="55" align="center" />
+          <u-table-column type="index" label="序号" width="55" align="center" />
 
           <u-table-column prop="orderNumber" label="调拨订单号" width="180" align="center" show-overflow-tooltip />
           <u-table-column prop="outWarehouseName" label="调出仓库" width="120" align="center" show-overflow-tooltip/>
@@ -171,8 +171,8 @@
 
           </u-table-column>
 
-          <u-table-column prop="outStockFinishTime" label="出库完成时间" width="120" align="center" />
-          <u-table-column prop="inStockFinishTime" label="入库完成时间" width="120" align="center" />
+          <u-table-column prop="outStockFinishTime" label="出库完成时间" width="160" align="center" />
+          <u-table-column prop="inStockFinishTime" label="入库完成时间" width="160" align="center" />
           <u-table-column prop="createdBy" label="创建人" width="100" align="center" show-overflow-tooltip/>
           <u-table-column prop="createdTime" label="创建时间" width="160" align="center" />
           <u-table-column prop="lastModifiedBy" label="修改人" width="100" align="center" show-overflow-tooltip/>
@@ -257,10 +257,10 @@ export default {
         supplierId: '',
         clientId: '',
         projectId: '',
-        deliveryMethodCode: '',
+        deliveryMethodCodeList: [],
         carrierId: '',
         transferStauts: '',
-        orderStatus: '',
+        orderStatusList: [],
       },
       createdTimeRange: [],
       deliveryMethodOptions: [],
@@ -367,8 +367,13 @@ export default {
     handleSearch() {
       this.searchLoading = true
       this.loading = true
-      this.searchForm.createdTimeStart = this.createdTimeRange[0];
-      this.searchForm.createdTimeEnd = this.createdTimeRange[1];
+      if (this.createdTimeRange && this.createdTimeRange.length === 2) {
+        this.searchForm.createdTimeStart = this.createdTimeRange[0]
+        this.searchForm.createdTimeEnd = this.createdTimeRange[1]
+      }else {
+        this.searchForm.createdTimeStart = null;
+        this.searchForm.createdTimeEnd = null;
+      }
       // 设置分页参数
       this.searchForm.page = this.pagination.page;
       this.searchForm.limit = this.pagination.size;

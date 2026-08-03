@@ -88,7 +88,16 @@ export function noticeSupplier (idList) {
   })
 }
 
-
+/**
+ * 通知供应商撤回
+ */
+export function noticeSupplierRepeal (idList) {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/purchaseSuggestionOrder/noticeSupplierRepeal',
+    method: 'post',
+    data: idList
+  })
+}
 /**
  * 生成采购入库单
  */
@@ -129,6 +138,17 @@ export function supplierConfirm (orderNumber) {
 export function manuConfirm (idList) {
   return request({
     url: process.env.VUE_APP_ICS_BASE_URL + '/purchaseSuggestionOrder/manuConfirm',
+    method: 'post',
+    data: idList
+  })
+}
+
+/**
+ * 订单确认撤回
+ */
+export function confirmRepeal (idList) {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/purchaseSuggestionOrder/confirmRepeal',
     method: 'post',
     data: idList
   })

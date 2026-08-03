@@ -19,13 +19,20 @@
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-          <el-select size="mini" filterable style="width:100%" v-model="searchForm.supplierId" placeholder="请选择供应商" clearable>
+          <el-select size="mini" style="width:100%" v-model="searchForm.supplierId" placeholder="请选择供应商" filterable clearable
+                     :filter-method="supplierFilterHandle"
+                     @visible-change="supplierOptionsForSelect = suppliers"
+          >
             <el-option
-              v-for="item in suppliers"
+              style="width:400px"
+              v-for="item in supplierOptionsForSelect"
               :key="item.supplierId"
               :label="item.supplierName"
               :value="item.supplierId"
-            />
+            >
+              <span style="float: left">{{ item.supplierCode }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.supplierName }}</span>
+            </el-option>
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
@@ -39,7 +46,7 @@
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="3">
-          <el-select size="mini"  style="width:100%"  v-model="searchForm.orderStatus" placeholder="请选择订单状态" clearable>
+          <el-select size="mini"  style="width:100%"  v-model="searchForm.orderStatusList" placeholder="请选择订单状态" clearable multiple>
             <el-option
               v-for="item in orderStatusOptions"
               :key="item.value"
@@ -49,7 +56,7 @@
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="3">
-          <el-select size="mini" style="width:100%"  v-model="searchForm.deliveryMethodCode" placeholder="请选择送货方式" clearable>
+          <el-select size="mini" style="width:100%"  v-model="searchForm.deliveryMethodCodeList" placeholder="请选择送货方式" clearable multiple>
             <el-option
               v-for="item in deliveryMethodOptions"
               :key="item.value"
@@ -84,30 +91,38 @@
             format="yyyy-MM-dd HH:mm:ss"
           />
         </el-col>
-        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="14">
+      </el-row>
+      <el-row :gutter="10" style="margin-top:10px">
+        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-row :gutter="8" class="button-group">
-            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="2">
+            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="1">
               <el-button size="mini" type="primary" @click="handleSearch" :loading="searchLoading" style="width:100%">查询</el-button>
             </el-col>
-            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="2" v-if="isAuth('ics:suggestion:add')">
+            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="1" v-if="isAuth('ics:suggestion:add')">
               <el-button size="mini" @click="handleAdd" style="width:100%">新增</el-button>
             </el-col>
-            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="3" v-if="isAuth('ics:suggestion:sendSupplier')">
+            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="2" v-if="isAuth('ics:suggestion:sendSupplier')">
               <el-button size="mini" :disabled="selectedRow.length === 0" :loading="sendSupplierLoading" @click="handleSendSupplierConfirm" style="width:100%">发送供应商确认</el-button>
             </el-col>
-            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="3" v-if="isAuth('ics:suggestion:generateInbound')">
+            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="2" v-if="isAuth('ics:suggestion:sendSupplierRepeal')">
+              <el-button size="mini" type="danger" :disabled="selectedRow.length === 0" :loading="sendSupplierRepealLoading" @click="handleSendSupplierConfirmRepeal" style="width:100%">发送供应商撤回</el-button>
+            </el-col>
+            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="2" v-if="isAuth('ics:suggestion:confirmRepeal')">
+              <el-button size="mini" type="danger" :disabled="selectedRow.length === 0" :loading="confirmRepealLoading" @click="handleConfirmRepeal" style="width:100%">订单确认撤回</el-button>
+            </el-col>
+            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="2" v-if="isAuth('ics:suggestion:generateInbound')">
               <el-button size="mini" :disabled="selectedRow.length === 0" :loading="generateInboundLoading" @click="handleGenerateInbound" style="width:100%">生成采购入库单</el-button>
             </el-col>
-            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="3" v-if="isAuth('ics:suggestion:inboundWithdraw')">
+            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="2" v-if="isAuth('ics:suggestion:inboundWithdraw')">
               <el-button size="mini" type="danger" :disabled="selectedRow.length === 0" :loading="inboundWithdrawLoading" @click="handleInboundWithdraw" style="width:100%">采购入库撤回</el-button>
             </el-col>
-            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="2" v-if="isAuth('ics:suggestion:cancel')">
+            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="1" v-if="isAuth('ics:suggestion:cancel')">
               <el-button size="mini" type="danger" :disabled="selectedRow.length === 0" :loading="cancelLoading" @click="handleCancel" style="width:100%">取消</el-button>
             </el-col>
-            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="2" v-if="isAuth('ics:suggestion:import')">
+            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="1" v-if="isAuth('ics:suggestion:import')">
               <el-button size="mini" :loading="importLoading" @click="handleImport" style="width:100%">导入</el-button>
             </el-col>
-            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="2" v-if="isAuth('ics:suggestion:export')">
+            <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="1" v-if="isAuth('ics:suggestion:export')">
               <el-button size="mini" :loading="exportLoading" @click="handleExport" style="width:100%">导出</el-button>
             </el-col>
           </el-row>
@@ -131,12 +146,12 @@
           style="width: 100%; height: 100%;"
           @selection-change="handleSelectionChange">
           <u-table-column type="selection" width="55" align="center" fixed="left"/>
-          <u-table-column type="index" width="55" align="center" />
+          <u-table-column type="index" label="序号" width="55" align="center" />
 
           <u-table-column prop="orderNumber" label="采购订单号" width="180" align="center" show-overflow-tooltip />
           <u-table-column prop="fromAddressName" label="提货地址" width="120" align="center" show-overflow-tooltip/>
           <u-table-column prop="deliveryWarehouseName" label="送货仓库" width="120" align="center" show-overflow-tooltip/>
-          <u-table-column prop="supplierName" label="供应商" width="150" align="center" show-overflow-tooltip />
+          <u-table-column prop="supplierName" label="供应商" width="250" align="center" show-overflow-tooltip />
           <u-table-column prop="projectName" label="货主" width="120" align="center" show-overflow-tooltip/>
 <!--          <u-table-column prop="documentTypeName" label="单据类型" width="100" align="center" />-->
           <u-table-column prop="deliveryMethodName" label="送货方式" width="100" align="center" />
@@ -149,6 +164,7 @@
             </template>
           </u-table-column>
           <u-table-column prop="estimatedDeliveryDate" label="预计到仓日期" width="120" align="center" />
+          <u-table-column prop="orderSourceName" label="订单来源" width="120" align="center" />
           <u-table-column prop="createdBy" label="创建人" width="100" align="center" show-overflow-tooltip/>
           <u-table-column prop="createdTime" label="创建时间" width="160" align="center" />
           <u-table-column prop="lastModifiedBy" label="修改人" width="100" align="center" show-overflow-tooltip/>
@@ -204,6 +220,7 @@ import API from "@/api";
 import {mapGetters} from "vuex";
 import Upload from '@/components/upload/upload'
 import {getImportTempletsUrl} from '@/utils/importTemplate'
+import {noticeSupplierRepeal} from "@/api/modules/purchase/suggestion";
 export default {
   name: "PurchaseSuggestion",
   components: {
@@ -228,6 +245,8 @@ export default {
       submitting: false,
       searchLoading: false,
       sendSupplierLoading: false,
+      sendSupplierRepealLoading: false,
+      confirmRepealLoading: false,
       generateInboundLoading: false,
       inboundWithdrawLoading: false,
       cancelLoading: false,
@@ -246,12 +265,12 @@ export default {
         deliveryWarehouseCode: '',
         supplierId: '',
         projectId: '',
-        deliveryMethodCode: '',
+        deliveryMethodCodeList: [],
         carrierId: '',
-        orderStatus: ''
+        orderStatusList: []
       },
+      supplierOptionsForSelect: [],
       createdTimeRange: [],
-      supplierOptions: [],
       deliveryMethodOptions: [],
       carrierOptions: [],
       orderStatusOptions: [],
@@ -371,8 +390,13 @@ export default {
     handleSearch() {
       this.searchLoading = true
       this.loading = true
-      this.searchForm.createdTimeStart = this.createdTimeRange[0];
-      this.searchForm.createdTimeEnd = this.createdTimeRange[1];
+      if (this.createdTimeRange && this.createdTimeRange.length === 2) {
+        this.searchForm.createdTimeStart = this.createdTimeRange[0]
+        this.searchForm.createdTimeEnd = this.createdTimeRange[1]
+      }else {
+        this.searchForm.createdTimeStart = null;
+        this.searchForm.createdTimeEnd = null;
+      }
       // 设置分页参数
       this.searchForm.page = this.pagination.page;
       this.searchForm.limit = this.pagination.size;
@@ -490,6 +514,62 @@ export default {
         })
       }).catch(() => {
         this.sendSupplierLoading = false
+      })
+    },
+    // 发送供应商确认撤回
+    handleSendSupplierConfirmRepeal() {
+      if (this.selectedRow.length === 0) {
+        this.$message.warning('请先选择要发送撤回的采购订单')
+        return
+      }
+      this.sendSupplierRepealLoading = true
+      const orderNumbers = this.selectedRow.map(row => row.orderNumber).join('、');
+      this.$confirm(`确认撤回向供应商发送采购订单：${orderNumbers} 的确认通知？`, '发送供应商撤回', {
+        confirmButtonText: '确定撤回',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 调用API发送供应商确认撤回
+        const ids = this.selectedRow.map(row => row.id);
+        API.suggestion.noticeSupplierRepeal(ids).then(({ data }) => {
+          if (data && data.code === 0) {
+            this.$message.success('已成功撤回发送供应商确认通知')
+            this.handleSearch()
+          }
+          this.sendSupplierRepealLoading = false
+        }).catch(error => {
+          this.sendSupplierRepealLoading = false
+        })
+      }).catch(() => {
+        this.sendSupplierRepealLoading = false
+      })
+    },
+    // 确认撤回
+    handleConfirmRepeal() {
+      if (this.selectedRow.length === 0) {
+        this.$message.warning('请先选择要订单确认撤回的采购订单')
+        return
+      }
+      this.confirmRepealLoading = true
+      const orderNumbers = this.selectedRow.map(row => row.orderNumber).join('、');
+      this.$confirm(`确认对采购订单：${orderNumbers} 进行订单确认撤回？`, '订单确认撤回', {
+        confirmButtonText: '确认撤回',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 调用API订单确认撤回
+        const ids = this.selectedRow.map(row => row.id);
+        API.suggestion.confirmRepeal(ids).then(({ data }) => {
+          if (data && data.code === 0) {
+            this.$message.success('已成功订单确认撤回')
+            this.handleSearch()
+          }
+          this.confirmRepealLoading = false
+        }).catch(error => {
+          this.confirmRepealLoading = false
+        })
+      }).catch(() => {
+        this.confirmRepealLoading = false
       })
     },
 
@@ -640,6 +720,17 @@ export default {
       this.$message.success('保存成功')
       this.dialogVisible = false
       this.handleSearch()
+    },
+    supplierFilterHandle(val) {
+      if (val) {
+        this.supplierOptionsForSelect = this.suppliers.filter((item => {
+          if (!!~item.supplierCode.indexOf(val) || !!~item.supplierCode.toUpperCase().indexOf(val.toUpperCase()) || !!~item.supplierName.indexOf(val) || !!~item.supplierName.toUpperCase().indexOf(val.toUpperCase())) {
+            return true
+          }
+        }))
+      } else {
+        this.supplierOptionsForSelect = this.suppliers;
+      }
     },
   }
 }

@@ -11,6 +11,16 @@ export function getDocumentTypeList() {
 }
 
 /**
+ * 获取所有单据类型
+ */
+export function getDocumentTypeListForBill() {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/constant/getDocumentTypeListForBill',
+    method: 'get'
+  })
+}
+
+/**
  * 获取所有采购建议单-订单状态
  */
 export function getPurchaseSuggestionOrderStatusList() {
@@ -133,6 +143,36 @@ export function getCalculationMethodList() {
 export function getDeliveryMethodList() {
   return request({
     url: process.env.VUE_APP_ICS_BASE_URL + '/constant/getDeliveryMethodList',
+    method: 'get'
+  })
+}
+
+/**
+ * 获取所有月结账单-状态
+ */
+export function getBillMonthRecordStatusList() {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/constant/bill/getBillMonthRecordStatusList',
+    method: 'get'
+  })
+}
+
+/**
+ * 获取数据周期列表
+ */
+export function getDataPeriodList() {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/constant/forecast/getDataPeriodList',
+    method: 'get'
+  })
+}
+
+/**
+ * 获取所有库存类型
+ */
+export function getInventoryTypeList() {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/constant/icsInventory/getInventoryTypeList',
     method: 'get'
   })
 }

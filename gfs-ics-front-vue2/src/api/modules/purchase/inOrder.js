@@ -222,7 +222,25 @@ export function billUpdate(params) {
     data: params
   })
 }
-
+/**
+ * 删除费用
+ */
+export function billDelete(params) {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/purchaseInOrder/bill/delete',
+    method: 'post',
+    data: params
+  })
+}
+/**
+ * 重新自动计算费用
+ */
+export function billReCalc(orderNumber) {
+  return request({
+    url: process.env.VUE_APP_ICS_BASE_URL + '/purchaseInOrder/bill/reCalc?orderNumber='+orderNumber,
+    method: 'get'
+  })
+}
 /**
  * 导出采购入库单
  * @param {Object} params - 查询参数

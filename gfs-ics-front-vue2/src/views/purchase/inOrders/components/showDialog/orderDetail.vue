@@ -134,7 +134,7 @@ export default {
       if(row.lotAttributeVos && row.lotAttributeVos.length > 0){
         return;
       }
-      API.suggestion.queryLotAttributeValueByOrderDetailId(row.id).then(({data}) => {
+      API.inOrder.queryLotAttributeValueByOrderDetailId(row.id).then(({data}) => {
         if (data.data && data.code === 0) {
           this.$set(row,"lotAttributeVos",data.data);
         }

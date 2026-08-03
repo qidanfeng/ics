@@ -17,7 +17,7 @@
     },
     activated() {
       document.getElementById('docFrame').contentWindow.location.reload(true);
-      // window.open('https://gfscold.gitee.io/gfs-oms-doc-front/#/','docFrame')
+      window.open('https://web.gfscold.com/doc/ics/#/','docFrame')
       window.open('','docFrame')
       this.height=(document.documentElement.clientHeight - this.navBarHeight - 10)+'px';
     },

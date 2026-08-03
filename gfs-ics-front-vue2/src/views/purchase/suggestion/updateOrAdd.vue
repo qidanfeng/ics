@@ -20,17 +20,21 @@
       <el-col :span="8">
         <el-form-item label="供应商" prop="supplierId">
           <el-select
-            v-if="supplierOptions && supplierOptions.length >0"
+            filterable
+            :filter-method="supplierFilterHandle"
+            @visible-change="supplierOptionsForSelect = supplierOptions"
             v-model="formData.supplierId"
             placeholder="请选择供应商"
             style="width: 100%"
           >
             <el-option
-              v-for="item in supplierOptions"
+              v-for="item in supplierOptionsForSelect"
               :key="item.supplierId"
               :label="item.supplierName"
-              :value="item.supplierId"
-            />
+              :value="item.supplierId">
+              <span style="float: left">{{ item.supplierCode }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.supplierName }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
       </el-col>
@@ -169,6 +173,7 @@
         ref="detailTable"
         :data="formData.detailList"
         row-key="index"
+        :row-class-name="tableRowClassName"
         border
         size="mini"
         show-summary
@@ -447,6 +452,7 @@ export default {
       projectOptions:[],
       carrierOptions:[],
       supplierOptions:[],
+      supplierOptionsForSelect:[],
       // 用于控制watch监听器的触发时机
       shouldTriggerWarehouseWatch: false,
       shouldTriggerProjectWatch: false,
@@ -563,11 +569,11 @@ export default {
     async addInit(dialogTitle,formData){
       this.dialogVisible = true;
       this.title = dialogTitle;
+      this.initFormData();
       try {
         // 启用watch监听器
         this.shouldTriggerWarehouseWatch = true;
         this.shouldTriggerProjectWatch = true;
-
         // 1. 加载供应商
         await this.loadSupplierOptions();
 
@@ -621,7 +627,98 @@ export default {
         this.$message.error('初始化失败，请重试');
       }
     },
+    async addInitFromForecastRecord(dialogTitle,formData){
+      this.dialogVisible = true;
+      this.title = dialogTitle;
+      try {
+        this.formData = {
+          id: null,
+          orderNumber:'',
+          forecastRecordIdList: formData.forecastRecordIdList,
+          deliveryWarehouseCode: formData.deliveryWarehouseCode,
+          deliveryWarehouseName: formData.deliveryWarehouseName,
+          supplierId: formData.supplierId,
+          supplierCode: formData.supplierCode,
+          supplierName:formData.supplierName,
+          clientId:formData.clientId,
+          clientCode:formData.clientCode,
+          clientName: formData.clientName,
+          projectId: formData.projectId,
+          projectCode: formData.projectCode,
+          projectName: formData.projectName,
+          fromAddressId:'',
+          fromAddressName:'',
+          fromAddressCode:'',
+          documentTypeCode: '10',
+          documentTypeName: '采购订单',
+          deliveryMethodCode: '',
+          deliveryMethodName: '',
+          carrierId: null,
+          carrierCode: '',
+          carrierName: '',
+          orderStatus: 10,
+          orderStatusName: '待确认',
+          estimatedDeliveryDate: '',
+          remarks: formData.remarks,
+          // 前端页面新增订单的操作来源，2=通过库存预测记录创建采购订单
+          frontAddOrderSource: 2,
+          detailList: formData.detailList,
+        }
 
+        // 1. 加载供应商
+        await this.loadSupplierOptions();
+        this.loadProjectOptions();
+        this.queryLotAttributeByCustomerId();
+        this.getFromAddressListByProjectIdHandle();
+        await this.loadProductPack();
+        this.formData.detailList.forEach((item,index) => {
+          this.calculateTotals(index)
+        })
+
+        // 5. 确保DOM更新完成
+        await this.$nextTick();
+        // 启用watch监听器
+        this.shouldTriggerWarehouseWatch = true;
+        this.shouldTriggerProjectWatch = true;
+      } catch (error) {
+        console.error('初始化失败:', error);
+        this.$message.error('初始化失败，请重试');
+      }
+    },
+    initFormData(){
+      this.formData = {
+        id: null,
+        orderNumber:'',
+        deliveryWarehouseCode: '',
+        deliveryWarehouseName: '',
+        supplierId: null,
+        supplierCode: '',
+        supplierName: '',
+        clientId: null,
+        clientCode: '',
+        clientName: '',
+        projectId: null,
+        projectCode: '',
+        projectName: '',
+        fromAddressId:'',
+        fromAddressName:'',
+        fromAddressCode:'',
+        documentTypeCode: '10',
+        documentTypeName: '采购订单',
+        deliveryMethodCode: '',
+        deliveryMethodName: '',
+        carrierId: null,
+        carrierCode: '',
+        carrierName: '',
+        orderStatus: 10,
+        orderStatusName: '待确认',
+        estimatedDeliveryDate: '',
+        remarks: '',
+        detailList:[]
+      };
+      this.shouldTriggerWarehouseWatch = false;
+      this.shouldTriggerProjectWatch = false;
+    },
     getSummaries(param) {
       const { columns, data } = param;
       const sums = [];
@@ -751,6 +848,7 @@ export default {
     // 重置表单
     resetForm() {
       this.$refs.form.resetFields()
+      this.initFormData();
       // 清空内部数据
       this.productList = []
       this.formData.detailList=[]
@@ -765,6 +863,7 @@ export default {
          API.productPriceConfig.getSupplierByClientId(this.client.id).then(({data}) => {
            if (data.code == 0) {
              this.supplierOptions = data.data;
+             this.supplierOptionsForSelect = this.supplierOptions;
              //如果只有一个供应商，直接选中，选中的同时 查询仓库
              if (this.supplierOptions.length == 1) {
                this.formData.supplierId = this.supplierOptions[0].supplierId;
@@ -871,8 +970,6 @@ export default {
     },
     // 表格行样式
     tableRowClassName({row, rowIndex}) {
-      row.lineNum = rowIndex + 1;
-      row.originalLineNum = rowIndex + 1;
       row.index = rowIndex;
     },
     //根据订单明细ID查询批属性值
@@ -899,7 +996,10 @@ export default {
       API.lotAttribute.queryLotAttributeByCustomerId(this.formData.projectId, 0).then(({data}) => {
         if (data.code === 0 && data.data) {
           this.lotAttributeVos = data.data;
-
+          if(this.formData.frontAddOrderSource === 2 && this.formData.detailList && this.formData.detailList.length > 0){
+            // 通过库存预测记录新增的采购订单给订单行赋批属性初始值
+            this.formData.detailList.forEach(item => this.$set(item,"lotAttributeVos",structuredClone(this.lotAttributeVos)));
+          }
 
         }
       }).catch(error => {
@@ -968,7 +1068,9 @@ export default {
       API.productPriceConfig.fuzzyQueryProduct(param).then(({data}) => {
         if (data.code === 0 && data.data) {
           this.product = data.data[0];
-          this.fillProductInfo(row, this.product,index);
+          if(this.product){
+            this.fillProductInfo(row, this.product,index);
+          }
 
         } else if (data.code === 0 && !data.data) {
           this.$message.warning("该货主下未找到产品[" + productNumber + "]的相关信息，请确认后重试");
@@ -1025,6 +1127,17 @@ export default {
           row.unitDictionaryId = row.packList[0].unitDictionaryId;
         }
 
+        if(this.formData.frontAddOrderSource === 2 && row.quantity > 0 && row.unitDictionaryId && row.weight === null){
+          // 通过库存预测生成采购建议单，初始化数据时计算重量、体积
+          let calculateIndexArr = [];
+          this.formData.detailList.forEach((item,index) => {
+            if(row.productId === item.productId){
+              calculateIndexArr.push(index);
+            }
+          })
+          calculateIndexArr.forEach(item => this.calculateTotals(item))
+        }
+
       }).catch(error => {
       })
     },
@@ -1062,7 +1175,18 @@ export default {
           orderDetail.volume = ((item.volume ? item.volume : 0) * (quantity ? quantity : 0)).toFixed(2);
         }
       }
-    }
+    },
+    supplierFilterHandle(val) {
+      if (val) {
+        this.supplierOptionsForSelect = this.supplierOptions.filter((item => {
+          if (!!~item.supplierCode.indexOf(val) || !!~item.supplierCode.toUpperCase().indexOf(val.toUpperCase()) || !!~item.supplierName.indexOf(val) || !!~item.supplierName.toUpperCase().indexOf(val.toUpperCase())) {
+            return true
+          }
+        }))
+      } else {
+        this.supplierOptionsForSelect = this.supplierOptions;
+      }
+    },
   },
 
 }

@@ -54,13 +54,16 @@
         <el-form-item label="供应商" prop="supplierId">
           <el-select
             filterable
+            :filter-method="supplierFilterHandle"
+            @visible-change="supplierOptionsForSelect = supplierOptions"
             v-model="currentFormData.supplierId"
             @change="supplierChangeHandle"
             placeholder="请选择供应商"
             style="width: 100%"
           >
             <el-option
-              v-for="item in supplierOptions"
+              style="width:400px"
+              v-for="item in supplierOptionsForSelect"
               :key="item.id"
               :label="item.shortName"
               :value="item.id">
@@ -109,18 +112,38 @@
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="订货周期(天)" prop="orderCycleTime">
+        <el-form-item label="安全库存天数" prop="safeStockDay">
           <el-input-number
-            v-model="currentFormData.orderCycleTime"
+            v-model="currentFormData.safeStockDay"
             :min="0"
             controls-position="right"
             style="width: 100%"
           />
         </el-form-item>
       </el-col>
+<!--      <el-col :span="8">-->
+<!--        <el-form-item label="订货周期(天)" prop="orderCycleTime">-->
+<!--          <el-input-number-->
+<!--            v-model="currentFormData.orderCycleTime"-->
+<!--            :min="0"-->
+<!--            controls-position="right"-->
+<!--            style="width: 100%"-->
+<!--          />-->
+<!--        </el-form-item>-->
+<!--      </el-col>-->
     </el-row>
 
     <el-row :gutter="20">
+<!--      <el-col :span="8">-->
+<!--        <el-form-item :label="'最小起订量(收货单位)'" prop="minOrderQuantity">-->
+<!--          <el-input-number-->
+<!--            v-model="currentFormData.minOrderQuantity"-->
+<!--            :min="0"-->
+<!--            controls-position="right"-->
+<!--            style="width: 100%"-->
+<!--          />-->
+<!--        </el-form-item>-->
+<!--      </el-col>-->
       <el-col :span="8">
         <el-form-item label="代采服务价" prop="proxyPurchasePrice">
           <el-input
@@ -219,7 +242,9 @@ export default {
         supplierId: null,
         supplierName: '',
         supplierCode: '',
-        orderCycleTime: 0,
+        safeStockDay: 0,
+        // orderCycleTime: 0,
+        // minOrderQuantity: 0,
         proxyPurchasePrice: 0,
         factoryPrice: 0,
         purchasePrice: 0,
@@ -228,6 +253,7 @@ export default {
       },
       submitButtonLoading:false,
       supplierOptions:[],
+      supplierOptionsForSelect:[],
       productList: [], // 产品列表
       projectOptions:[],
       warehouseOptions:[],
@@ -253,9 +279,16 @@ export default {
         clientId: [
           { required: true, message: '请选择客户', trigger: 'blur' }
         ],
-        orderCycleTime: [
-          { required: true, message: '请输入订货周期', trigger: 'blur' }
+        // orderCycleTime: [
+        //   { required: true, message: '请输入订货周期', trigger: 'blur' }
+        // ],
+        // minOrderQuantity: [
+        //   { required: true, message: '请输入最小起订量(收货单位)', trigger: 'blur' }
+        // ],
+        safeStockDay: [
+          { required: true, message: '请输入安全库存天数', trigger: 'blur' }
         ],
+
         proxyPurchasePrice: [
           { required: true, message: '请输入代采服务价', trigger: 'blur' },
           { validator: this.validatePrice, trigger: 'blur' }
@@ -299,7 +332,9 @@ export default {
         factoryPrice: 0.00,
         purchasePrice: 0.00,
         transferPrice: 0.00,
-        orderCycleTime: 0,
+        safeStockDay: 0,
+        // orderCycleTime: 0,
+        // minOrderQuantity: 0,
         createdBy: '',
         createdTime: '',
         lastModifiedBy: '',
@@ -308,7 +343,6 @@ export default {
         remarks: ''
       }
       this.dialogVisible = true
-      this.loadWarehouseOptions();
       this.loadProjectOptions();
     },
 
@@ -321,6 +355,17 @@ export default {
       this.loadProjectOptions();
       this.loadSupplierOptions();
 
+    },
+    supplierFilterHandle(val) {
+      if (val) {
+        this.supplierOptionsForSelect = this.supplierOptions.filter((item => {
+          if (!!~item.code.indexOf(val) || !!~item.code.toUpperCase().indexOf(val.toUpperCase()) || !!~item.shortName.indexOf(val) || !!~item.shortName.toUpperCase().indexOf(val.toUpperCase())) {
+            return true
+          }
+        }))
+      } else {
+        this.supplierOptionsForSelect = this.supplierOptions;
+      }
     },
 
     // 弹窗关闭处理
@@ -394,7 +439,9 @@ export default {
       API.product.queryEntityByProductNumberAndCustomerId(this.currentFormData.productNumber, this.currentFormData.projectId).then(({data}) => {
         if (data.code === 0 && data.data) {
           this.product = data.data[0];
-          this.fillProductInfo(this.product,null);
+          if(this.product){
+            this.fillProductInfo(this.product,null);
+          }
         } else if (data.code === 0 && !data.data) {
           this.$message.warning("该货主下未找到产品[" + this.currentFormData.productNumber + "]的相关信息，请确认后重试");
           return;
@@ -459,7 +506,7 @@ export default {
     },
     loadWarehouseOptions(){
       let param = {
-        clientId:this.client.id,
+        externalClientId:this.client.id,
         projectId: this.currentFormData.projectId
       }
       API.warehouse.getActivatedWarehouseByParams(param).then(({data})=>{
@@ -480,6 +527,7 @@ export default {
           // 同时赋值给code和name字段
           this.currentFormData.projectCode = selectedProject.code;
           this.currentFormData.projectName = selectedProject.shortName;
+          this.loadWarehouseOptions();
           //查询货主对应的供应商
           this.loadSupplierOptions();
         }
@@ -509,11 +557,11 @@ export default {
     supplierChangeHandle(value) {
       if (value) {
         // 根据选择的供应商ID查找对应的供应商信息
-        const selectedSupplier = this.supplierOptions.find(supplier => supplier.id === value);
+        const selectedSupplier = this.supplierOptionsForSelect.find(supplier => supplier.id === value);
         console.log(selectedSupplier);
         if (selectedSupplier) {
           // 同时赋值给name字段
-          this.currentFormData.supplierName = selectedSupplier.fullName;
+          this.currentFormData.supplierName = selectedSupplier.shortName;
           this.currentFormData.supplierCode = selectedSupplier.code;
         }
       } else {
@@ -531,9 +579,9 @@ export default {
       }
 
       // 检查是否为数字格式（支持小数）
-      const priceRegex = /^\d+(\.\d{1,2})?$/;
+      const priceRegex = /^\d+(\.\d{1,4})?$/;
       if (!priceRegex.test(value)) {
-        callback(new Error('请输入正确的数字格式，最多支持两位小数'));
+        callback(new Error('请输入正确的数字格式，最多支持四位小数'));
       } else {
         callback();
       }
@@ -541,7 +589,8 @@ export default {
     loadSupplierOptions(){
       API.supplier.getSupplierVoByCustomerId(this.currentFormData.projectId).then(({ data }) => {
         if (data && data.code === 0) {
-          this.supplierOptions = data.data
+          this.supplierOptions = data.data;
+          this.supplierOptionsForSelect = this.supplierOptions;
         }
 
       })

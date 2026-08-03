@@ -24,16 +24,21 @@
           <el-col :span="8">
             <el-form-item label="供应商" prop="supplierId">
               <el-select
+                filterable
+                :filter-method="supplierFilterHandle"
+                @visible-change="supplierOptionsForSelect = supplierOptions"
                 v-model="formData.supplierId"
                 placeholder="请选择供应商"
                 style="width: 100%"
               >
                 <el-option
-                  v-for="item in supplierOptions"
+                  v-for="item in supplierOptionsForSelect"
                   :key="item.supplierId"
                   :label="item.supplierName"
-                  :value="item.supplierId"
-                />
+                  :value="item.supplierId">
+                  <span style="float: left">{{ item.supplierCode }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.supplierName }}</span>
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -164,7 +169,7 @@
                 <el-input-number
                   v-model="scope.row.quantity"
                   :min="1"
-                  :max="scope.row.availableQty"
+                  :max="scope.row.quantityMaxLimit"
                   size="mini"
                   @change="handleReturnQtyChange(scope.$index)"
                 />
@@ -253,6 +258,7 @@ export default {
       formData:{},
       projectOptions:[],
       supplierOptions:[],
+      supplierOptionsForSelect:[],
       warehouseOptions:[],
       // 表单验证规则
       rules: {
@@ -401,6 +407,7 @@ export default {
           if (data.data && data.data.length> 0) {
 
             this.supplierOptions = data.data;
+            this.supplierOptionsForSelect = this.supplierOptions;
             //如果只有一个供应商，直接选中，选中的同时 查询仓库
             if (this.supplierOptions.length == 1) {
               this.formData.supplierId = this.supplierOptions[0].supplierId;
@@ -599,9 +606,9 @@ export default {
     // 退货数量变化处理
     handleReturnQtyChange(index) {
       const detail = this.formData.detailList[index]
-      if (detail.quantity > detail.availableQty) {
-        this.$message.warning(`退货数量不能超过可用库存（${detail.availableQty}）`)
-        detail.quantity = detail.availableQty
+      if (detail.quantity > detail.quantityMaxLimit) {
+        this.$message.warning(`退货数量不能超过可用库存（${detail.quantityMaxLimit}）`)
+        detail.quantity = detail.quantityMaxLimit
       }
     },
 
@@ -675,7 +682,18 @@ export default {
     handleInventoryDialogClose() {
       // 清空选择状态
       this.inventoryDialogVisible = false
-    }
+    },
+    supplierFilterHandle(val) {
+      if (val) {
+        this.supplierOptionsForSelect = this.supplierOptions.filter((item => {
+          if (!!~item.supplierCode.indexOf(val) || !!~item.supplierCode.toUpperCase().indexOf(val.toUpperCase()) || !!~item.supplierName.indexOf(val) || !!~item.supplierName.toUpperCase().indexOf(val.toUpperCase())) {
+            return true
+          }
+        }))
+      } else {
+        this.supplierOptionsForSelect = this.supplierOptions;
+      }
+    },
   }
 }
 </script>

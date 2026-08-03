@@ -18,12 +18,12 @@
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="费项编码" prop="costItemCode">
+          <el-form-item v-if="isEdit" label="费项编码" prop="costItemCode">
             <el-input
               v-model="currentFormData.costItemCode"
               placeholder="请输入费项编码"
               style="width: 100%"
-              :disabled="isEdit"
+              disabled
             />
           </el-form-item>
         </el-col>
