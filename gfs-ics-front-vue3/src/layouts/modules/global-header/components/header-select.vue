@@ -3,7 +3,6 @@
     v-model="selectedClientId"
     filterable
     placeholder="客户"
-    size="small"
     class="client-select"
     @change="clientChangeHandle"
   >
@@ -57,6 +56,6 @@ async function clientChangeHandle(clientId: string | number) {
 
 <style scoped>
 .client-select {
-  width: 220px;
+  width: 320px;
 }
 </style>
