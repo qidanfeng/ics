@@ -176,6 +176,32 @@ export function queryEntityByProductCnNameAndClientId(productCnName: string, cli
   });
 }
 
+/**
+ * 根据产品编码和货主ID查询产品实体
+ * @param productNumber 产品编码
+ * @param customerId 货主ID
+ */
+export function queryEntityByProductNumberAndCustomerId(productNumber: string, customerId: string | number) {
+  return request<any>({
+    url: '/mdm/product/queryEntityByProductNumberAndCustomerId',
+    method: 'get',
+    params: { productNumber, customerId }
+  });
+}
+
+/**
+ * 根据产品中文名和货主ID查询产品实体
+ * @param productCnName 产品中文名
+ * @param customerId 货主ID
+ */
+export function queryEntityByProductCnNameAndCustomerId(productCnName: string, customerId: string | number) {
+  return request<any>({
+    url: '/mdm/product/queryEntityByProductCnNameAndCustomerId',
+    method: 'get',
+    params: { productCnName, customerId }
+  });
+}
+
 export function updateStatusByIds(params: any[]) {
   return request<any>({
     url: '/mdm/product/updateStatusByIds',
@@ -417,6 +443,8 @@ const productApi = {
   fuzzyQueryByProductNumberAndCustomerId,
   updateProductAddressStatus,
   queryEntityByProductCnNameAndClientId,
+  queryEntityByProductNumberAndCustomerId,
+  queryEntityByProductCnNameAndCustomerId,
   updateStatusByIds,
   exportProduct,
   getAllTemperatureRange,

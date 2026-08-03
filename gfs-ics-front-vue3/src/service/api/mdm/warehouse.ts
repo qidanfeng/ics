@@ -95,3 +95,15 @@ export function getAllWarehouse(params?: any) {
     data: params
   });
 }
+
+/**
+ * 根据条件查询激活的仓库
+ * @param params
+ */
+export function getActivatedWarehouseByParams(params: any) {
+  return request<any>({
+    url: '/mdm/warehouse/getActivatedWarehouseByParams',
+    method: 'post',
+    data: params
+  });
+}

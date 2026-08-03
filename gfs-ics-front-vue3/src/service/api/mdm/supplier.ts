@@ -205,3 +205,15 @@ export function deleteQualificationFile(id: string | number) {
     params: { id }
   });
 }
+
+/**
+ * 根据货主ID获取供应商VO列表
+ * @param customerId 货主ID
+ */
+export function getSupplierVoByCustomerId(customerId: string | number) {
+  return request<any>({
+    url: '/mdm/supplier/getSupplierVoByCustomerId',
+    method: 'get',
+    params: { customerId }
+  });
+}
