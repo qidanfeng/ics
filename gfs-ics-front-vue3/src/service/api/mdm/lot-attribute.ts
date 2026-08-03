@@ -26,3 +26,15 @@ export function getLotAttributeByCustomerId(customerId: string | number) {
     params: { customerId }
   });
 }
+
+/**
+ * 根据客户ID和产品ID查询批次属性
+ * @param customerId 客户ID
+ * @param productId 产品ID
+ */
+export function queryLotAttributeByCustomerId(customerId: string | number, productId: string | number) {
+  return request<any>({
+    url: `/mdm/lotAttribute/queryByCustomerIdAndProductId?customerId=${customerId}&productId=${productId}`,
+    method: 'get'
+  });
+}
