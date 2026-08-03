@@ -3,7 +3,6 @@ import { defineStore } from 'pinia';
 import { SetupStoreId } from '@/enum';
 import { queryActivatedOwnClientInfo } from '@/service/api/mdm/client';
 import { getProjectByClientId, getWarehouseByClientId, getSupplierByClientId } from '@/service/api/basic/product-price-config';
-import { getActivatedCarrierByExternalClientId } from '@/service/api/mdm/carrier';
 
 /**
  * 平台数据 Store（对应 vue2 项目的 platForm store）
@@ -121,24 +120,6 @@ export const usePlatformStore = defineStore(SetupStoreId.PageParams + '-platform
       setSuppliers([]);
     }
   }
-
-  /**
-   * 加载承运商列表
-   */
-  async function loadCarriers(id: string | number) {
-    try {
-      const { response } = await getActivatedCarrierByExternalClientId(id);
-      if (response && response.data && (response.data.code as unknown as number) === 0) {
-        setCarriers(response.data.data || []);
-      } else {
-        setCarriers([]);
-      }
-    } catch (e) {
-      console.error('加载承运商列表失败:', e);
-      setCarriers([]);
-    }
-  }
-
   /**
    * 切换客户后重新加载关联数据
    */
@@ -151,7 +132,7 @@ export const usePlatformStore = defineStore(SetupStoreId.PageParams + '-platform
       setCarriers([]);
       return;
     }
-    await Promise.all([loadProjects(c.id), loadWarehouses(c.id), loadSuppliers(c.id), loadCarriers(c.id)]);
+    await Promise.all([loadProjects(c.id), loadWarehouses(c.id), loadSuppliers(c.id)]);
   }
 
   /**
@@ -195,7 +176,6 @@ export const usePlatformStore = defineStore(SetupStoreId.PageParams + '-platform
     loadProjects,
     loadWarehouses,
     loadSuppliers,
-    loadCarriers,
     changeClient,
     init
   };
