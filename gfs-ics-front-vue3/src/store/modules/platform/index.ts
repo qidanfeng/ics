@@ -6,9 +6,9 @@ import { getProjectByClientId, getWarehouseByClientId, getSupplierByClientId } f
 
 /**
  * 平台数据 Store（对应 vue2 项目的 platForm store）
- * 用于存储当前选中的客户(client)以及客户关联的 projects/warehouses/suppliers/carriers
+ * 用于存储当前选中的客户(client)以及客户关联的 projects/warehouses/suppliers
  */
-export const usePlatformStore = defineStore(SetupStoreId.PageParams + '-platform', () => {
+export const usePlatformStore = defineStore(SetupStoreId.Platform, () => {
   // 当前选中的客户
   const client = ref<any>(null);
   // 客户列表
@@ -19,8 +19,6 @@ export const usePlatformStore = defineStore(SetupStoreId.PageParams + '-platform
   const warehouses = ref<any[]>([]);
   // 供应商列表
   const suppliers = ref<any[]>([]);
-  // 承运商列表
-  const carriers = ref<any[]>([]);
 
   // 是否已初始化
   const inited = ref(false);
@@ -61,13 +59,6 @@ export const usePlatformStore = defineStore(SetupStoreId.PageParams + '-platform
    */
   function setSuppliers(list: any[]) {
     suppliers.value = list || [];
-  }
-
-  /**
-   * 设置承运商列表
-   */
-  function setCarriers(list: any[]) {
-    carriers.value = list || [];
   }
 
   /**
@@ -129,7 +120,6 @@ export const usePlatformStore = defineStore(SetupStoreId.PageParams + '-platform
       setProjects([]);
       setWarehouses([]);
       setSuppliers([]);
-      setCarriers([]);
       return;
     }
     await Promise.all([loadProjects(c.id), loadWarehouses(c.id), loadSuppliers(c.id)]);
@@ -164,7 +154,6 @@ export const usePlatformStore = defineStore(SetupStoreId.PageParams + '-platform
     projects,
     warehouses,
     suppliers,
-    carriers,
     clientId,
     inited,
     setClient,
@@ -172,7 +161,6 @@ export const usePlatformStore = defineStore(SetupStoreId.PageParams + '-platform
     setProjects,
     setWarehouses,
     setSuppliers,
-    setCarriers,
     loadProjects,
     loadWarehouses,
     loadSuppliers,

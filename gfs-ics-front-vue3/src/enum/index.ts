@@ -4,6 +4,6 @@ export enum SetupStoreId {
   Auth = 'auth-store',
   Route = 'route-store',
   Tab = 'tab-store',
-  Company = 'company-store',
+  Platform = 'platform-store',
   PageParams = 'page-params-store'
 }
