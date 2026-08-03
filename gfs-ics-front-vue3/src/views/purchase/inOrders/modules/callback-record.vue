@@ -114,7 +114,7 @@
 import { ref, type Component } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Refresh, User, Timer, CircleCheck, CircleClose, Loading, InfoFilled } from '@element-plus/icons-vue';
-import { getCallbackLogByOrderNumber, callbackLogRetry } from '@/service/api/ics/purchase-in-order';
+import { getCallbackLogByOrderNumber, callbackLogRetry } from '@/service/api/purchase/purchase-in-order';
 
 defineOptions({ name: 'CallBackRecord' });
 

@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { getInOmsOrderCallbackInfo } from '@/service/api/ics/purchase-in-order';
+import { getInOmsOrderCallbackInfo } from '@/service/api/purchase/purchase-in-order';
 import { queryLotAttributeByCustomerId } from '@/service/api/mdm/lot-attribute';
 
 defineOptions({ name: 'ActualDetail' });

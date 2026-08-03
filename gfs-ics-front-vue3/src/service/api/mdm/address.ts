@@ -208,6 +208,18 @@ export function getAddressByCode(code: string) {
 }
 
 /**
+ * 根据客户ID获取地址VO列表
+ * @param customerId
+ */
+export function getAddressVosByCustomerId(customerId: string | number) {
+  return request<any>({
+    url: '/mdm/address/getAddressVosByCustomerId',
+    method: 'get',
+    params: { customerId }
+  });
+}
+
+/**
  * 导出数据
  * @param params
  */

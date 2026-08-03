@@ -41,7 +41,7 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { User, Timer, Right } from '@element-plus/icons-vue';
-import { getMonitorOrderStatusByOrderNumber } from '@/service/api/purchase/purchase-in-order';
+import { getMonitorOrderStatusByOrderNumber } from '@/service/api/purchase/suggestion';
 
 defineOptions({ name: 'StatusRecord' });
 
@@ -63,7 +63,7 @@ async function loadStatusRecordData(orderNumber: string) {
   try {
     const { response } = await getMonitorOrderStatusByOrderNumber(orderNumber);
     const data: any = response?.data;
-    if (data.code === 0 && data.data) {
+    if (data && (data.code as unknown as number) === 0 && data.data) {
       operationRecords.value = formatStatusData(data.data);
       ElMessage.success('状态记录数据加载成功');
     } else {
@@ -79,6 +79,7 @@ async function loadStatusRecordData(orderNumber: string) {
 
 /** 格式化状态数据 */
 function formatStatusData(rawData: any) {
+  // 确保rawData是数组，如果不是则转换为数组
   const dataArray = Array.isArray(rawData) ? rawData : [rawData];
   return dataArray.map((item: any) => ({
     operator: item.createdBy || item.lastModifiedBy || '未知用户',

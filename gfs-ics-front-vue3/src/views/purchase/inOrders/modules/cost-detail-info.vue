@@ -51,7 +51,7 @@
 import { ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useAuth } from '@/hooks/business/auth';
-import { billSave, billUpdate, billDelete } from '@/service/api/ics/purchase-in-order';
+import { billSave, billUpdate, billDelete } from '@/service/api/purchase/purchase-in-order';
 
 defineOptions({ name: 'CostDetailInfo' });
 

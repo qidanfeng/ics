@@ -100,6 +100,14 @@ export function updateProductPack(params: any) {
   });
 }
 
+export function getProductPackByProductId(productId: string | number) {
+  return request<any>({
+    url: '/mdm/product/getProductPackByProductId',
+    method: 'get',
+    params: { productId }
+  });
+}
+
 export function del(params: any[]) {
   return request<any>({
     url: '/mdm/product/delete',
@@ -432,6 +440,7 @@ const productApi = {
   updateProduct,
   updateProductBarcode,
   updateProductPack,
+  getProductPackByProductId,
   del,
   importFile,
   importFileForUpdate,

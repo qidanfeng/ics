@@ -145,8 +145,8 @@ import {
   billSave,
   billUpdate,
   billReCalc
-} from '@/service/api/ics/purchase-in-order';
-import { getAllCostItemCodeList } from '@/service/api/ics/bill-item-config';
+} from '@/service/api/purchase/purchase-in-order';
+import { getAllCostItemCodeList } from '@/service/api/bill/bill-item-config';
 import CostDetailInfo from './cost-detail-info.vue';
 
 defineOptions({ name: 'CostDetail' });

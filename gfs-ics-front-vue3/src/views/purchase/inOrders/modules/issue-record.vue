@@ -107,7 +107,7 @@
 import { ref, type Component } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Refresh, User, Timer, CircleCheck, CircleClose, InfoFilled } from '@element-plus/icons-vue';
-import { getOrderIssueLogByOrderNumber, issue } from '@/service/api/ics/purchase-in-order';
+import { getOrderIssueLogByOrderNumber, issue } from '@/service/api/purchase/purchase-in-order';
 
 defineOptions({ name: 'IssueRecord' });
 

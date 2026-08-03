@@ -16,8 +16,7 @@
       <el-table-column prop="productNumber" label="产品编码" min-width="120" show-overflow-tooltip />
       <el-table-column prop="productName" label="产品名称" min-width="150" show-overflow-tooltip />
       <el-table-column prop="lineNumber" label="行号" width="80" align="center" />
-      <el-table-column prop="quantity" label="采购数量" width="100" align="center" />
-      <el-table-column prop="inStockQuantity" label="入库数量" width="100" align="center" />
+      <el-table-column prop="quantity" label="数量" width="100" align="center" />
       <el-table-column prop="unitDictionaryName" label="单位" width="80" align="center" />
       <el-table-column type="expand" label="批属性" width="100">
         <template #default="{ row }">
@@ -53,7 +52,7 @@ import { ElMessage } from 'element-plus';
 import {
   getDetailListByOrderNumber,
   queryLotAttributeValueByOrderDetailId as queryLotAttributeValueByOrderDetailIdApi
-} from '@/service/api/purchase/purchase-in-order';
+} from '@/service/api/purchase/suggestion';
 
 defineOptions({ name: 'OrderDetail' });
 
@@ -61,6 +60,7 @@ const tableData = ref<any[]>([]);
 
 /** 初始化 */
 async function init(orderData: any) {
+  console.log('orderDetail init called with:', orderData);
   if (orderData && orderData.orderNumber) {
     await loadOrderDetailData(orderData.orderNumber);
   } else {
@@ -74,7 +74,7 @@ async function loadOrderDetailData(orderNumber: string) {
   try {
     const { response } = await getDetailListByOrderNumber(orderNumber);
     const data: any = response?.data;
-    if (data.code === 0 && data.data) {
+    if (data && (data.code as unknown as number) === 0 && data.data) {
       tableData.value = formatTableData(data.data);
       ElMessage.success('订单明细数据加载成功');
     } else {
@@ -96,16 +96,15 @@ function formatTableData(rawData: any[]) {
     productName: item.productName || '',
     lineNumber: item.lineNumber || '',
     quantity: item.quantity || 0,
-    inStockQuantity: item.inStockQuantity || 0,
     unitDictionaryName: item.unitDictionaryName || '',
     volume: item.volume || 0,
     weight: item.weight || 0,
     totalPrice: item.totalPrice || 0,
-    remarks: item.remarks || '',
     createdBy: item.createdBy || '',
     createdTime: item.createdTime || '',
     lastModifiedBy: item.lastModifiedBy || '',
     lastModifiedTime: item.lastModifiedTime || '',
+    remarks: item.remarks || '',
     lotAttributeVos: []
   }));
 }
@@ -128,7 +127,7 @@ function queryLotAttributeValueByOrderDetailId(row: any, _expandedRows: any) {
   }
   queryLotAttributeValueByOrderDetailIdApi(row.id).then(({ response }) => {
     const data: any = response?.data;
-    if (data.data && data.code === 0) {
+    if (data && data.data && (data.code as unknown as number) === 0) {
       row.lotAttributeVos = data.data;
     }
   });
