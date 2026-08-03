@@ -26,7 +26,7 @@ interface FormModel {
 
 const model = ref<FormModel>({
   userName: 'admin',
-  password: 'Uat@2o26',
+  password: '2@26OUat',
   code: ''
 });
 
@@ -64,8 +64,8 @@ const accounts = computed<Account[]>(() => [
   {
     key: 'admin',
     label: $t('page.login.pwdLogin.admin'),
-    userName: 'Admin',
-    password: '123456'
+    userName: 'admin',
+    password: '2@26OUat'
   },
   {
     key: 'user',

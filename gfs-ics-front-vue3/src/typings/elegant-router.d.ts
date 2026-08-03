@@ -36,22 +36,8 @@ declare module "@elegant-router/types" {
     "404": "/404";
     "500": "/500";
     "basic": "/basic";
-    "basic_address": "/basic/address";
-    "basic_carrier": "/basic/carrier";
-    "basic_client": "/basic/client";
-    "basic_dictionary": "/basic/dictionary";
-    "basic_operation-relation": "/basic/operation-relation";
-    "basic_product": "/basic/product";
-    "basic_product_modules": "/basic/product/modules";
-    "basic_product_modules_add-or-update": "/basic/product/modules/add-or-update";
-    "basic_product-audits": "/basic/product-audits";
-    "basic_project": "/basic/project";
-    "basic_supplier": "/basic/supplier";
-    "basic_warehouse": "/basic/warehouse";
-    "config": "/config";
-    "config_product-audit-config": "/config/product-audit-config";
-    "edi": "/edi";
-    "edi_mdm-synch-task": "/edi/mdm-synch-task";
+    "basic_orderquantity": "/basic/orderquantity";
+    "basic_productprice": "/basic/productprice";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
@@ -105,8 +91,6 @@ declare module "@elegant-router/types" {
     | "404"
     | "500"
     | "basic"
-    | "config"
-    | "edi"
     | "home"
     | "iframe-page"
     | "login"
@@ -134,19 +118,8 @@ declare module "@elegant-router/types" {
     | "500"
     | "iframe-page"
     | "login"
-    | "basic_address"
-    | "basic_carrier"
-    | "basic_client"
-    | "basic_dictionary"
-    | "basic_operation-relation"
-    | "basic_product-audits"
-    | "basic_product"
-    | "basic_product_modules_add-or-update"
-    | "basic_project"
-    | "basic_supplier"
-    | "basic_warehouse"
-    | "config_product-audit-config"
-    | "edi_mdm-synch-task"
+    | "basic_orderquantity"
+    | "basic_productprice"
     | "home"
   >;
 

@@ -49,154 +49,21 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
-        name: 'basic_address',
-        path: '/basic/address',
-        component: 'view.basic_address',
+        name: 'basic_orderquantity',
+        path: '/basic/orderquantity',
+        component: 'view.basic_orderquantity',
         meta: {
-          title: 'basic_address',
-          i18nKey: 'route.basic_address'
+          title: 'basic_orderquantity',
+          i18nKey: 'route.basic_orderquantity'
         }
       },
       {
-        name: 'basic_carrier',
-        path: '/basic/carrier',
-        component: 'view.basic_carrier',
+        name: 'basic_productprice',
+        path: '/basic/productprice',
+        component: 'view.basic_productprice',
         meta: {
-          title: 'basic_carrier',
-          i18nKey: 'route.basic_carrier'
-        }
-      },
-      {
-        name: 'basic_client',
-        path: '/basic/client',
-        component: 'view.basic_client',
-        meta: {
-          title: 'basic_client',
-          i18nKey: 'route.basic_client'
-        }
-      },
-      {
-        name: 'basic_dictionary',
-        path: '/basic/dictionary',
-        component: 'view.basic_dictionary',
-        meta: {
-          title: 'basic_dictionary',
-          i18nKey: 'route.basic_dictionary'
-        }
-      },
-      {
-        name: 'basic_operation-relation',
-        path: '/basic/operation-relation',
-        component: 'view.basic_operation-relation',
-        meta: {
-          title: 'basic_operation-relation',
-          i18nKey: 'route.basic_operation-relation'
-        }
-      },
-      {
-        name: 'basic_product',
-        path: '/basic/product',
-        component: 'view.basic_product',
-        meta: {
-          title: 'basic_product',
-          i18nKey: 'route.basic_product'
-        },
-        children: [
-          {
-            name: 'basic_product_modules',
-            path: '/basic/product/modules',
-            meta: {
-              title: 'basic_product_modules',
-              i18nKey: 'route.basic_product_modules'
-            },
-            children: [
-              {
-                name: 'basic_product_modules_add-or-update',
-                path: '/basic/product/modules/add-or-update',
-                component: 'view.basic_product_modules_add-or-update',
-                meta: {
-                  title: 'basic_product_modules_add-or-update',
-                  i18nKey: 'route.basic_product_modules_add-or-update'
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        name: 'basic_product-audits',
-        path: '/basic/product-audits',
-        component: 'view.basic_product-audits',
-        meta: {
-          title: 'basic_product-audits',
-          i18nKey: 'route.basic_product-audits'
-        }
-      },
-      {
-        name: 'basic_project',
-        path: '/basic/project',
-        component: 'view.basic_project',
-        meta: {
-          title: 'basic_project',
-          i18nKey: 'route.basic_project'
-        }
-      },
-      {
-        name: 'basic_supplier',
-        path: '/basic/supplier',
-        component: 'view.basic_supplier',
-        meta: {
-          title: 'basic_supplier',
-          i18nKey: 'route.basic_supplier'
-        }
-      },
-      {
-        name: 'basic_warehouse',
-        path: '/basic/warehouse',
-        component: 'view.basic_warehouse',
-        meta: {
-          title: 'basic_warehouse',
-          i18nKey: 'route.basic_warehouse'
-        }
-      }
-    ]
-  },
-  {
-    name: 'config',
-    path: '/config',
-    component: 'layout.base',
-    meta: {
-      title: 'config',
-      i18nKey: 'route.config'
-    },
-    children: [
-      {
-        name: 'config_product-audit-config',
-        path: '/config/product-audit-config',
-        component: 'view.config_product-audit-config',
-        meta: {
-          title: 'config_product-audit-config',
-          i18nKey: 'route.config_product-audit-config'
-        }
-      }
-    ]
-  },
-  {
-    name: 'edi',
-    path: '/edi',
-    component: 'layout.base',
-    meta: {
-      title: 'edi',
-      i18nKey: 'route.edi'
-    },
-    children: [
-      {
-        name: 'edi_mdm-synch-task',
-        path: '/edi/mdm-synch-task',
-        component: 'view.edi_mdm-synch-task',
-        meta: {
-          title: 'edi_mdm-synch-task',
-          i18nKey: 'route.edi_mdm-synch-task'
+          title: 'basic_productprice',
+          i18nKey: 'route.basic_productprice'
         }
       }
     ]
