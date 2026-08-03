@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-cmn-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="https://gfs-business-system.oss-cn-shanghai.aliyuncs.com/system/logo/logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- 百度地图配置：传递环境变量中的 AK 给加载器 -->
+    <script>
+      window.BAIDU_MAP_AK = '%VITE_BAIDU_MAP_AK%';
+    </script>
+
+    <!-- 百度地图API加载器 -->
+    <script type="text/javascript" src="/baidu-map-loader.js"></script>
+
+    <title>%VITE_APP_TITLE%</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

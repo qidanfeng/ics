@@ -1,0 +1,129 @@
+/**
+ * Created by PanJiaChen on 16/11/18.
+ */
+
+/**
+ * @param {string} path
+ * @returns {Boolean}
+ */
+export function isExternal(path) {
+  return /^(https?:|mailto:|tel:)/.test(path)
+}
+
+
+
+/**
+ * @param {string} url
+ * @returns {Boolean}
+ */
+export function validURL(url) {
+  const reg = /^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/
+  return reg.test(url)
+}
+
+/**
+ * @param {string} str
+ * @returns {Boolean}
+ */
+export function validLowerCase(str) {
+  const reg = /^[a-z]+$/
+  return reg.test(str)
+}
+
+/**
+ * @param {string} str
+ * @returns {Boolean}
+ */
+export function validUpperCase(str) {
+  const reg = /^[A-Z]+$/
+  return reg.test(str)
+}
+
+/**
+ * @param {string} str
+ * @returns {Boolean}
+ */
+export function validAlphabets(str) {
+  const reg = /^[A-Za-z]+$/
+  return reg.test(str)
+}
+
+/**
+ * @param {string} email
+ * @returns {Boolean}
+ */
+export function validEmail(email) {
+  const reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return reg.test(email)
+}
+
+/**
+ * @param {string} str
+ * @returns {Boolean}
+ */
+export function isString(str) {
+  if (typeof str === 'string' || str instanceof String) {
+    return true
+  }
+  return false
+}
+
+/**
+ * @param {Array} arg
+ * @returns {Boolean}
+ */
+export function isArray(arg) {
+  if (typeof Array.isArray === 'undefined') {
+    return Object.prototype.toString.call(arg) === '[object Array]'
+  }
+  return Array.isArray(arg)
+}
+
+/**
+ * 电话号码
+ * @param {*} s
+ */
+export function isPhone (s) {
+  return /^([0-9]{3,4}-)?[0-9]{7,8}$/.test(s)
+}
+
+/**
+ * 手机号码
+ * @param {*} s
+ */
+export function isMobile (s) {
+  return /^((\+?86)|(\(\+86\)))?(19[012356789][0-9]{8}|13[0123456789][0-9]{8}|15[012356789][0-9]{8}|166[0-9]{8}|18[0123456789][0-9]{8}|17[012356789][0-9]{8}|14[579][0-9]{8}|1349[0-9]{7})$/.test(s)
+}
+
+/*
+* 对象为空判断   返回true 对象中有属性有值   false 对象为空
+* */
+export function objValidate(obj){
+  let flag = false;
+  for(var key in obj){
+    if(obj[key] || obj[key] != '' ){
+      return true;
+    }
+  }
+  return flag;
+}
+
+export function setObj(obj){
+  return obj ? obj : '';
+}
+
+/*
+* 不为0判断  返回true
+* */
+export function numbenValidate(n){
+  let flag = false;
+  if(n===0){
+    return true;
+  }
+  return flag;
+}
+
+export function isZeroToSix(number) {
+  return /^[0-6]$/.test(number);
+}
+

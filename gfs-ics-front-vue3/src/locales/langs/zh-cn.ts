@@ -1,0 +1,488 @@
+const local: App.I18n.Schema = {
+  system: {
+    title: '普冷MDM',
+    updateTitle: '系统版本更新通知',
+    updateContent: '检测到系统有新版本发布，是否立即刷新页面？',
+    updateConfirm: '立即刷新',
+    updateCancel: '稍后再说'
+  },
+  common: {
+    action: '操作',
+    add: '新增',
+    addSuccess: '添加成功',
+    backToHome: '返回首页',
+    batchDelete: '批量删除',
+    cancel: '取消',
+    close: '关闭',
+    check: '勾选',
+    expandColumn: '展开列',
+    columnSetting: '列设置',
+    config: '配置',
+    confirm: '确认',
+    delete: '删除',
+    deleteSuccess: '删除成功',
+    confirmDelete: '确认删除吗？',
+    edit: '编辑',
+    warning: '警告',
+    error: '错误',
+    index: '序号',
+    keywordSearch: '请输入关键词搜索',
+    logout: '退出登录',
+    logoutConfirm: '确认退出登录吗？',
+    lookForward: '敬请期待',
+    modify: '修改',
+    modifySuccess: '修改成功',
+    noData: '无数据',
+    operate: '操作',
+    pleaseCheckValue: '请检查输入的值是否合法',
+    refresh: '刷新',
+    reset: '重置',
+    search: '搜索',
+    switch: '切换',
+    tip: '提示',
+    trigger: '触发',
+    update: '更新',
+    updateSuccess: '更新成功',
+    documentMdm: 'MDM文档',
+    yesOrNo: {
+      yes: '是',
+      no: '否'
+    }
+  },
+  request: {
+    logout: '请求失败后登出用户',
+    logoutMsg: '用户状态失效，请重新登录',
+    logoutWithModal: '请求失败后弹出模态框再登出用户',
+    logoutWithModalMsg: '用户状态失效，请重新登录',
+    refreshToken: '请求的token已过期，刷新token',
+    tokenExpired: 'token已过期'
+  },
+  theme: {
+    themeSchema: {
+      title: '主题模式',
+      light: '亮色模式',
+      dark: '暗黑模式',
+      auto: '跟随系统'
+    },
+    grayscale: '灰色模式',
+    colourWeakness: '色弱模式',
+    layoutMode: {
+      title: '布局模式',
+      vertical: '左侧菜单模式',
+      'vertical-mix': '左侧菜单混合模式',
+      horizontal: '顶部菜单模式',
+      'horizontal-mix': '顶部菜单混合模式',
+      reverseHorizontalMix: '一级菜单与子级菜单位置反转'
+    },
+    recommendColor: '应用推荐算法的颜色',
+    recommendColorDesc: '推荐颜色的算法参照',
+    themeColor: {
+      title: '主题颜色',
+      primary: '主色',
+      info: '信息色',
+      success: '成功色',
+      warning: '警告色',
+      error: '错误色',
+      followPrimary: '跟随主色'
+    },
+    scrollMode: {
+      title: '滚动模式',
+      wrapper: '外层滚动',
+      content: '主体滚动'
+    },
+    page: {
+      animate: '页面切换动画',
+      mode: {
+        title: '页面切换动画类型',
+        'fade-slide': '滑动',
+        fade: '淡入淡出',
+        'fade-bottom': '底部消退',
+        'fade-scale': '缩放消退',
+        'zoom-fade': '渐变',
+        'zoom-out': '闪现',
+        none: '无'
+      }
+    },
+    fixedHeaderAndTab: '固定头部和标签栏',
+    header: {
+      height: '头部高度',
+      breadcrumb: {
+        visible: '显示面包屑',
+        showIcon: '显示面包屑图标'
+      },
+      multilingual: {
+        visible: '显示多语言按钮'
+      },
+      globalSearch: {
+        visible: '显示全局搜索按钮'
+      }
+    },
+    tab: {
+      visible: '显示标签栏',
+      cache: '标签栏信息缓存',
+      height: '标签栏高度',
+      mode: {
+        title: '标签栏风格',
+        chrome: '谷歌风格',
+        button: '按钮风格'
+      }
+    },
+    sider: {
+      inverted: '深色侧边栏',
+      width: '侧边栏宽度',
+      collapsedWidth: '侧边栏折叠宽度',
+      mixWidth: '混合布局侧边栏宽度',
+      mixCollapsedWidth: '混合布局侧边栏折叠宽度',
+      mixChildMenuWidth: '混合布局子菜单宽度'
+    },
+    footer: {
+      visible: '显示底部',
+      fixed: '固定底部',
+      height: '底部高度',
+      right: '底部局右'
+    },
+    watermark: {
+      visible: '显示全屏水印',
+      text: '水印文本',
+      enableUserName: '启用用户名水印'
+    },
+    themeDrawerTitle: '主题配置',
+    pageFunTitle: '页面功能',
+    configOperation: {
+      copyConfig: '复制配置',
+      copySuccessMsg: '复制成功，请替换 src/theme/settings.ts 中的变量 themeSettings',
+      resetConfig: '重置配置',
+      resetSuccessMsg: '重置成功'
+    }
+  },
+  route: {
+    login: '登录',
+    403: '无权限',
+    404: '页面不存在',
+    500: '服务器错误',
+    'iframe-page': '外链页面',
+    home: '首页',
+    'user-center': '个人中心',
+    document: '帮助文档',
+    document_mdm: 'MDM文档',
+    exception: '异常页',
+    exception_403: '403',
+    exception_404: '404',
+    exception_500: '500',
+
+    edi: 'EDI管理',
+    "edi_mdm-synch-task": '主数据下发记录',
+
+    "config": '系统配置',
+    "config_product-audit-config": '产品审核配置',
+
+    basic: '信息管理',
+    "basic_client": '客户管理',
+    "basic_address": '地址管理',
+    "basic_project": '货主管理',
+
+    "basic_supplier": '供应商管理',
+    "basic_warehouse": '仓库管理',
+    "basic_dictionary": '字典管理',
+    "basic_operation-relation": '运作关系',
+
+    "basic_carrier": '承运商管理',
+    "basic_supplier": '供应商管理',
+    "basic_product": '产品管理',
+    "basic_product-audits": '产品审核',
+
+
+
+
+  },
+  page: {
+    login: {
+      common: {
+        loginOrRegister: '登录 / 注册',
+        userNamePlaceholder: '请输入用户名',
+        phonePlaceholder: '请输入手机号',
+        codePlaceholder: '请输入验证码',
+        passwordPlaceholder: '请输入密码',
+        confirmPasswordPlaceholder: '请再次输入密码',
+        codeLogin: '验证码登录',
+        confirm: '确定',
+        back: '返回',
+        validateSuccess: '验证成功',
+        loginSuccess: '登录成功',
+        welcomeBack: '欢迎回来，{userName} ！'
+      },
+      pwdLogin: {
+        title: '密码登录',
+        rememberMe: '记住我',
+        forgetPassword: '忘记密码？',
+        register: '注册账号',
+        otherAccountLogin: '其他账号登录',
+        otherLoginMode: '其他登录方式',
+        superAdmin: '超级管理员',
+        admin: '管理员',
+        user: '普通用户'
+      },
+      codeLogin: {
+        title: '验证码登录',
+        getCode: '获取验证码',
+        reGetCode: '{time}秒后重新获取',
+        sendCodeSuccess: '验证码发送成功',
+        imageCodePlaceholder: '请输入图片验证码'
+      },
+      register: {
+        title: '注册账号',
+        agreement: '我已经仔细阅读并接受',
+        protocol: '《用户协议》',
+        policy: '《隐私权政策》'
+      },
+      resetPwd: {
+        title: '重置密码'
+      },
+      bindWeChat: {
+        title: '绑定微信'
+      }
+    },
+    alova: {
+      scenes: {
+        captchaSend: '发送验证码',
+        autoRequest: '自动请求',
+        visibilityRequestTips: '浏览器窗口切换自动请求数据',
+        pollingRequestTips: '每3秒自动请求一次',
+        networkRequestTips: '网络重连后自动请求',
+        refreshTime: '更新时间',
+        startRequest: '开始请求',
+        stopRequest: '停止请求',
+        requestCrossComponent: '跨组件触发请求',
+        triggerAllRequest: '手动触发所有自动请求'
+      }
+    },
+    manage: {
+      common: {
+        status: {
+          enable: '启用',
+          disable: '禁用'
+        }
+      },
+      role: {
+        title: '角色列表',
+        roleName: '角色名称',
+        roleCode: '角色编码',
+        roleStatus: '角色状态',
+        roleDesc: '角色描述',
+        menuAuth: '菜单权限',
+        buttonAuth: '按钮权限',
+        form: {
+          roleName: '请输入角色名称',
+          roleCode: '请输入角色编码',
+          roleStatus: '请选择角色状态',
+          roleDesc: '请输入角色描述'
+        },
+        addRole: '新增角色',
+        editRole: '编辑角色'
+      },
+      user: {
+        title: '用户列表',
+        userName: '用户名',
+        userGender: '性别',
+        nickName: '昵称',
+        userPhone: '手机号',
+        userEmail: '邮箱',
+        userStatus: '用户状态',
+        userRole: '用户角色',
+        form: {
+          userName: '请输入用户名',
+          userGender: '请选择性别',
+          nickName: '请输入昵称',
+          userPhone: '请输入手机号',
+          userEmail: '请输入邮箱',
+          userStatus: '请选择用户状态',
+          userRole: '请选择用户角色'
+        },
+        addUser: '新增用户',
+        editUser: '编辑用户',
+        gender: {
+          male: '男',
+          female: '女'
+        }
+      },
+      menu: {
+        home: '首页',
+        title: '菜单列表',
+        id: 'ID',
+        parentId: '父级菜单ID',
+        menuType: '菜单类型',
+        menuName: '菜单名称',
+        routeName: '路由名称',
+        routePath: '路由路径',
+        pathParam: '路径参数',
+        layout: '布局',
+        page: '页面组件',
+        i18nKey: '国际化key',
+        icon: '图标',
+        localIcon: '本地图标',
+        iconTypeTitle: '图标类型',
+        order: '排序',
+        constant: '常量路由',
+        keepAlive: '缓存路由',
+        href: '外链',
+        hideInMenu: '隐藏菜单',
+        activeMenu: '高亮的菜单',
+        multiTab: '支持多页签',
+        fixedIndexInTab: '固定在页签中的序号',
+        query: '路由参数',
+        button: '按钮',
+        buttonCode: '按钮编码',
+        buttonDesc: '按钮描述',
+        menuStatus: '菜单状态',
+        form: {
+          home: '请选择首页',
+          menuType: '请选择菜单类型',
+          menuName: '请输入菜单名称',
+          routeName: '请输入路由名称',
+          routePath: '请输入路由路径',
+          pathParam: '请输入路径参数',
+          page: '请选择页面组件',
+          layout: '请选择布局组件',
+          i18nKey: '请输入国际化key',
+          icon: '请输入图标',
+          localIcon: '请选择本地图标',
+          order: '请输入排序',
+          keepAlive: '请选择是否缓存路由',
+          href: '请输入外链',
+          hideInMenu: '请选择是否隐藏菜单',
+          activeMenu: '请选择高亮的菜单的路由名称',
+          multiTab: '请选择是否支持多标签',
+          fixedInTab: '请选择是否固定在页签中',
+          fixedIndexInTab: '请输入固定在页签中的序号',
+          queryKey: '请输入路由参数Key',
+          queryValue: '请输入路由参数Value',
+          button: '请选择是否按钮',
+          buttonCode: '请输入按钮编码',
+          buttonDesc: '请输入按钮描述',
+          menuStatus: '请选择菜单状态'
+        },
+        addMenu: '新增菜单',
+        editMenu: '编辑菜单',
+        addChildMenu: '新增子菜单',
+        type: {
+          directory: '目录',
+          menu: '菜单',
+          button: '按钮'
+        },
+        iconType: {
+          iconify: 'iconify图标',
+          local: '本地图标'
+        }
+      }
+    }
+  },
+  basic: {
+    customerContract: {
+      contractList: '合约列表',
+      addSettlementProject: '新增结算项目',
+      addOperationProject: '增加操作项目',
+      contractName: '合同名称',
+      customer: '所属客户',
+      businessUnit: '业务单元',
+      sales: '销售',
+      effectiveTime: '生效时间',
+      expirationTime: '失效时间',
+      settlementCycle: '结算周期',
+      projectLevel: '项目层级',
+      projectName: '项目名称',
+      sapProjectCode: 'SAP项目编码',
+      sapProjectName: 'SAP项目名称',
+      contract: '所属合约',
+      parentProject: '父级项目',
+      invoiceRules: '开票规则',
+      selectedRules: '已选规则',
+      accountingItems: '绑定会计费项',
+      contractCode: '合约编码',
+      placeholder: {
+        code: '请输入项目编码',
+        contractName: '请输入合同名称',
+        customer: '请输入所属客户',
+        projectName: '请输入项目名称',
+        contract: '请输入所属合约',
+        sapProjectCode: '请输入SAP编码',
+        sapProjectName: '请输入SAP项目名称',
+        serviceType: '请选择项目服务类型',
+        feeBasis: '请选择提点依据',
+        revenueDepartment: '请输入收入部门',
+        projectManager: '请输入项目负责人',
+        shipperId: '请输入货主ID',
+        businessUnit: '请输入业务单元',
+        remark: '请输入备注信息',
+        parentProject: '请输入父级项目',
+        invoiceRules: '请选择开票规则',
+        settlementCycle: '请选择结算周期',
+        effectiveTime: '选择生效时间',
+        expirationTime: '选择失效时间',
+        sales: '请输入销售',
+        contractCode: '请输入合约编码'
+      },
+      serviceType: {
+        storage: '仓储',
+        transport: '运输',
+        delivery: '配送',
+        other: '其他'
+      },
+      feeBasis: {
+        totalAmount: '总金额',
+        netIncome: '净收入',
+        other: '其他'
+      }
+    }
+  },
+  form: {
+    required: '不能为空',
+    userName: {
+      required: '请输入用户名',
+      invalid: '用户名格式不正确'
+    },
+    phone: {
+      required: '请输入手机号',
+      invalid: '手机号格式不正确'
+    },
+    pwd: {
+      required: '请输入密码',
+      invalid: '密码格式不正确，6-18位字符，包含字母、数字、下划线'
+    },
+    confirmPwd: {
+      required: '请输入确认密码',
+      invalid: '两次输入密码不一致'
+    },
+    code: {
+      required: '请输入验证码',
+      invalid: '验证码格式不正确'
+    },
+    email: {
+      required: '请输入邮箱',
+      invalid: '邮箱格式不正确'
+    }
+  },
+  dropdown: {
+    closeCurrent: '关闭',
+    closeOther: '关闭其它',
+    closeLeft: '关闭左侧',
+    closeRight: '关闭右侧',
+    closeAll: '关闭所有'
+  },
+  icon: {
+    themeConfig: '主题配置',
+    themeSchema: '主题模式',
+    lang: '切换语言',
+    fullscreen: '全屏',
+    fullscreenExit: '退出全屏',
+    reload: '刷新页面',
+    collapse: '折叠菜单',
+    expand: '展开菜单',
+    pin: '固定',
+    unpin: '取消固定'
+  },
+  datatable: {
+    itemCount: '共 {total} 条'
+  }
+};
+
+export default local;
