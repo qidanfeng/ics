@@ -42,6 +42,9 @@ declare module "@elegant-router/types" {
     "bill_bill-calculation-config": "/bill/bill-calculation-config";
     "bill_bill-item-config": "/bill/bill-item-config";
     "bill_bill-month-record": "/bill/bill-month-record";
+    "forecast": "/forecast";
+    "forecast_record": "/forecast/record";
+    "forecast_strategy": "/forecast/strategy";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
     "inventory": "/inventory";
@@ -104,6 +107,7 @@ declare module "@elegant-router/types" {
     | "500"
     | "basic"
     | "bill"
+    | "forecast"
     | "home"
     | "iframe-page"
     | "inventory"
@@ -138,6 +142,8 @@ declare module "@elegant-router/types" {
     | "bill_bill-calculation-config"
     | "bill_bill-item-config"
     | "bill_bill-month-record"
+    | "forecast_record"
+    | "forecast_strategy"
     | "home"
     | "inventory_ics-inventory"
     | "inventory_inventory-details"

@@ -107,6 +107,35 @@ export const generatedRoutes: GeneratedRoute[] = [
     ]
   },
   {
+    name: 'forecast',
+    path: '/forecast',
+    component: 'layout.base',
+    meta: {
+      title: 'forecast',
+      i18nKey: 'route.forecast'
+    },
+    children: [
+      {
+        name: 'forecast_record',
+        path: '/forecast/record',
+        component: 'view.forecast_record',
+        meta: {
+          title: 'forecast_record',
+          i18nKey: 'route.forecast_record'
+        }
+      },
+      {
+        name: 'forecast_strategy',
+        path: '/forecast/strategy',
+        component: 'view.forecast_strategy',
+        meta: {
+          title: 'forecast_strategy',
+          i18nKey: 'route.forecast_strategy'
+        }
+      }
+    ]
+  },
+  {
     name: 'home',
     path: '/home',
     component: 'layout.base$view.home',
