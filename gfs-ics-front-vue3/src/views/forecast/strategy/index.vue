@@ -170,7 +170,7 @@
           <el-table-column prop="remarks" label="备注" width="120" align="center" />
           <el-table-column prop="status" label="状态" width="80" align="center">
             <template #default="{ row }">
-              <el-switch v-model="row.status === 1" disabled />
+              <el-switch :model-value="row.status === 1" disabled />
             </template>
           </el-table-column>
           <el-table-column prop="createdBy" label="创建人" width="100" align="center" show-overflow-tooltip />
