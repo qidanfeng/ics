@@ -38,11 +38,21 @@ declare module "@elegant-router/types" {
     "basic": "/basic";
     "basic_orderquantity": "/basic/orderquantity";
     "basic_productprice": "/basic/productprice";
+    "bill": "/bill";
+    "bill_bill-calculation-config": "/bill/bill-calculation-config";
+    "bill_bill-item-config": "/bill/bill-item-config";
+    "bill_bill-month-record": "/bill/bill-month-record";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
+    "inventory": "/inventory";
+    "inventory_ics-inventory": "/inventory/ics-inventory";
+    "inventory_inventory-details": "/inventory/inventory-details";
+    "inventory_return-supplier": "/inventory/return-supplier";
+    "inventory_transfer-orders": "/inventory/transfer-orders";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
     "purchase": "/purchase";
     "purchase_inorders": "/purchase/inorders";
+    "purchase_suggestion": "/purchase/suggestion";
   };
 
   /**
@@ -93,8 +103,10 @@ declare module "@elegant-router/types" {
     | "404"
     | "500"
     | "basic"
+    | "bill"
     | "home"
     | "iframe-page"
+    | "inventory"
     | "login"
     | "purchase"
   >;
@@ -123,8 +135,16 @@ declare module "@elegant-router/types" {
     | "login"
     | "basic_orderquantity"
     | "basic_productprice"
+    | "bill_bill-calculation-config"
+    | "bill_bill-item-config"
+    | "bill_bill-month-record"
     | "home"
+    | "inventory_ics-inventory"
+    | "inventory_inventory-details"
+    | "inventory_return-supplier"
+    | "inventory_transfer-orders"
     | "purchase_inorders"
+    | "purchase_suggestion"
   >;
 
   /**

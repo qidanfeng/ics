@@ -69,6 +69,44 @@ export const generatedRoutes: GeneratedRoute[] = [
     ]
   },
   {
+    name: 'bill',
+    path: '/bill',
+    component: 'layout.base',
+    meta: {
+      title: 'bill',
+      i18nKey: 'route.bill'
+    },
+    children: [
+      {
+        name: 'bill_bill-calculation-config',
+        path: '/bill/bill-calculation-config',
+        component: 'view.bill_bill-calculation-config',
+        meta: {
+          title: 'bill_bill-calculation-config',
+          i18nKey: 'route.bill_bill-calculation-config'
+        }
+      },
+      {
+        name: 'bill_bill-item-config',
+        path: '/bill/bill-item-config',
+        component: 'view.bill_bill-item-config',
+        meta: {
+          title: 'bill_bill-item-config',
+          i18nKey: 'route.bill_bill-item-config'
+        }
+      },
+      {
+        name: 'bill_bill-month-record',
+        path: '/bill/bill-month-record',
+        component: 'view.bill_bill-month-record',
+        meta: {
+          title: 'bill_bill-month-record',
+          i18nKey: 'route.bill_bill-month-record'
+        }
+      }
+    ]
+  },
+  {
     name: 'home',
     path: '/home',
     component: 'layout.base$view.home',
@@ -91,6 +129,53 @@ export const generatedRoutes: GeneratedRoute[] = [
       hideInMenu: true,
       keepAlive: true
     }
+  },
+  {
+    name: 'inventory',
+    path: '/inventory',
+    component: 'layout.base',
+    meta: {
+      title: 'inventory',
+      i18nKey: 'route.inventory'
+    },
+    children: [
+      {
+        name: 'inventory_ics-inventory',
+        path: '/inventory/ics-inventory',
+        component: 'view.inventory_ics-inventory',
+        meta: {
+          title: 'inventory_ics-inventory',
+          i18nKey: 'route.inventory_ics-inventory'
+        }
+      },
+      {
+        name: 'inventory_inventory-details',
+        path: '/inventory/inventory-details',
+        component: 'view.inventory_inventory-details',
+        meta: {
+          title: 'inventory_inventory-details',
+          i18nKey: 'route.inventory_inventory-details'
+        }
+      },
+      {
+        name: 'inventory_return-supplier',
+        path: '/inventory/return-supplier',
+        component: 'view.inventory_return-supplier',
+        meta: {
+          title: 'inventory_return-supplier',
+          i18nKey: 'route.inventory_return-supplier'
+        }
+      },
+      {
+        name: 'inventory_transfer-orders',
+        path: '/inventory/transfer-orders',
+        component: 'view.inventory_transfer-orders',
+        meta: {
+          title: 'inventory_transfer-orders',
+          i18nKey: 'route.inventory_transfer-orders'
+        }
+      }
+    ]
   },
   {
     name: 'login',
@@ -120,6 +205,15 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'purchase_inorders',
           i18nKey: 'route.purchase_inorders'
+        }
+      },
+      {
+        name: 'purchase_suggestion',
+        path: '/purchase/suggestion',
+        component: 'view.purchase_suggestion',
+        meta: {
+          title: 'purchase_suggestion',
+          i18nKey: 'route.purchase_suggestion'
         }
       }
     ]
